@@ -11,15 +11,13 @@ import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.LatestRate;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
 public class DownloadExchangeRates {
+
     @Autowired
     private ExchangeRateService exchangeRateService;
 
@@ -90,10 +88,10 @@ public class DownloadExchangeRates {
     }
 
     public void downloadAndSaveLatest(){
-        for(int i = 0; i < currency.length; i++){
-            String url = "https://api.exchangeratesapi.io/latest?base="+currency[i];
+        for (String s : currency) {
+            String url = "https://api.exchangeratesapi.io/latest?base=" + s;
             String json = this.restTemplate.getForObject(url, String.class);
-            if (json.contains("error"))
+            if (json == null || json.contains("error"))
                 continue;
 
             JSONObject jsonObject = new JSONObject(json);
@@ -104,7 +102,7 @@ public class DownloadExchangeRates {
             JSONArray names = rates.names();
             JSONArray jsonArray = new JSONArray();
 
-            while (x.hasNext()){
+            while (x.hasNext()) {
                 String key = (String) x.next();
                 jsonArray.put(rates.get(key));
             }
@@ -123,15 +121,15 @@ public class DownloadExchangeRates {
 //                }
 //            }
 
-            if (this.latestRateService.getLatestRates(currency[i]).size() == 0) {
-                for(int j = 0; j < jsonArray.length(); j++) {
+            if (this.latestRateService.getLatestRates(s).size() == 0) {
+                for (int j = 0; j < jsonArray.length(); j++) {
                     this.latestRateService.addRate(
-                            new LatestRate(currency[i], (String) names.get(j), Double.parseDouble(String.valueOf(jsonArray.get(j))))
+                            new LatestRate(s, (String) names.get(j), Double.parseDouble(String.valueOf(jsonArray.get(j))))
                     );
                 }
             } else {
                 for (int j = 0; j < jsonArray.length(); j++) {
-                    this.latestRateService.updateRate(currency[i], (String) names.get(j), Double.parseDouble(String.valueOf(jsonArray.get(j))));
+                    this.latestRateService.updateRate(s, (String) names.get(j), Double.parseDouble(String.valueOf(jsonArray.get(j))));
                 }
             }
         }
