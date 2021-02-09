@@ -1,0 +1,54 @@
+package sk.matusturjak.exchange_rates.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import sk.matusturjak.exchange_rates.model.ExchangeRate;
+import sk.matusturjak.exchange_rates.repository.ExchangeRateRepository;
+import sk.matusturjak.exchange_rates.service.ExchangeRateService;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+@Service
+public class ExchangeRateServiceImpl implements ExchangeRateService {
+
+    @Autowired
+    private ExchangeRateRepository exchangeRateRepository;
+
+    @Override
+    public void addRate(ExchangeRate exchangeRate) {
+        this.exchangeRateRepository.save(exchangeRate);
+    }
+
+    @Override
+    public List<ExchangeRate> getAllRates(String from, String to) {
+        return this.exchangeRateRepository.getAllRates(from, to);
+    }
+
+    @Override
+    public List<ExchangeRate> getLastRates(String from, String to, Integer count) {
+        return this.exchangeRateRepository.getLastRates(from, to, count);
+    }
+
+    @Override
+    public List<ExchangeRate> getRates(String from, String to, String start_at, String end_at) {
+        try {
+            return this.exchangeRateRepository.getRates(from, to, new SimpleDateFormat("yyyy-MM-dd").parse(start_at),
+                    new SimpleDateFormat("yyyy-MM-dd").parse(end_at));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ExchangeRate> getLatest() {
+        return this.exchangeRateRepository.getLatest();
+    }
+
+    @Override
+    public Integer getSize() {
+        return this.exchangeRateRepository.getSize();
+    }
+}
