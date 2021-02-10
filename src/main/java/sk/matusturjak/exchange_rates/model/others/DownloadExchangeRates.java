@@ -11,6 +11,9 @@ import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.LatestRate;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -108,18 +111,13 @@ public class DownloadExchangeRates {
             }
 
             //add latest rates to exchange_rates table
-//            for (int j = 0; j < jsonArray.length(); j++) {
-//                try {
-//                    this.exchangeRateService.addRate(
-//                            new ExchangeRate(
-//                                    currency[i], (String) names.get(j),Double.parseDouble(String.valueOf(jsonArray.get(j))),
-//                                    new SimpleDateFormat("yyyy-MM-dd").parse(date)
-//                            )
-//                    );
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            for (int j = 0; j < jsonArray.length(); j++) {
+                this.exchangeRateService.addRate(
+                        new ExchangeRate(
+                                s, (String) names.get(j),Double.parseDouble(String.valueOf(jsonArray.get(j))), date
+                        )
+                );
+            }
 
             if (this.latestRateService.getLatestRates(s).size() == 0) {
                 for (int j = 0; j < jsonArray.length(); j++) {

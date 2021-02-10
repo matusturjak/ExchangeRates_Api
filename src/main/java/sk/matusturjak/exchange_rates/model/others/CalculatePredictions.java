@@ -98,8 +98,8 @@ public class CalculatePredictions extends TimerTask {
     @Override
     public void run() {
         System.out.println("start");
-        this.calculateAndSave();
         this.downloadExchangeRates.downloadAndSaveLatest();
+        this.calculateAndSave();
         System.out.println("end");
     }
 }
