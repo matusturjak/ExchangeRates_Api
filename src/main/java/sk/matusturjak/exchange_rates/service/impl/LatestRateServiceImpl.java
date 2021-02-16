@@ -30,6 +30,16 @@ public class LatestRateServiceImpl implements LatestRateService {
     }
 
     @Override
+    public LatestRate getLatestRate(String from, String to) {
+        return this.latestRateRepository
+                .findAll()
+                .stream()
+                .filter(latestRate -> latestRate.getRate().getFirstCountry().equals(from) &&
+                        latestRate.getRate().getSecondCountry().equals(to))
+                .findAny().orElse(null);
+    }
+
+    @Override
     public Integer getSize() {
         return this.latestRateRepository.getSize();
     }

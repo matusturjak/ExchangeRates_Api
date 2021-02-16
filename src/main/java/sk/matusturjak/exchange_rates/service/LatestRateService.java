@@ -7,6 +7,7 @@ import java.util.List;
 public interface LatestRateService {
     List<LatestRate> getAllLatestRates();
     List<LatestRate> getLatestRates(String from);
+    LatestRate getLatestRate(String from, String to);
 
     Integer getSize();
 
