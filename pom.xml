@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>11</java.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -67,6 +68,7 @@
 					<groupId>org.junit.vintage</groupId>
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
+
 			</exclusions>
 		</dependency>
 		<dependency>

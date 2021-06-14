@@ -111,13 +111,13 @@ public class DownloadExchangeRates {
             }
 
             //add latest rates to exchange_rates table
-            for (int j = 0; j < jsonArray.length(); j++) {
-                this.exchangeRateService.addRate(
-                        new ExchangeRate(
-                                s, (String) names.get(j),Double.parseDouble(String.valueOf(jsonArray.get(j))), date
-                        )
-                );
-            }
+//            for (int j = 0; j < jsonArray.length(); j++) {
+//                this.exchangeRateService.addRate(
+//                        new ExchangeRate(
+//                                s, (String) names.get(j),Double.parseDouble(String.valueOf(jsonArray.get(j))), date
+//                        )
+//                );
+//            }
 
             if (this.latestRateService.getLatestRates(s).size() == 0) {
                 for (int j = 0; j < jsonArray.length(); j++) {
