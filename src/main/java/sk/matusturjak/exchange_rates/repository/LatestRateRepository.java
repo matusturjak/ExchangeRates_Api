@@ -7,9 +7,16 @@ import org.springframework.stereotype.Repository;
 import sk.matusturjak.exchange_rates.model.LatestRate;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface LatestRateRepository extends JpaRepository<LatestRate, Long> {
+
+    @Query(value = "SELECT * FROM latest_rates WHERE first_country LIKE ?1", nativeQuery = true)
+    List<LatestRate> getLatestRates(String from);
+
+    @Query(value = "SELECT * FROM latest_rates WHERE first_country LIKE ?1 AND second_country LIKE ?2", nativeQuery = true)
+    LatestRate getLatestRate(String from, String to);
 
     @Modifying
     @Transactional

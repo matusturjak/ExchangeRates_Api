@@ -1,8 +1,5 @@
 package sk.matusturjak.exchange_rates.predictions.exp_smoothing;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class LinearRegression {
     private double intercept, slope;
 

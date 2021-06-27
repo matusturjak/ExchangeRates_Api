@@ -9,6 +9,7 @@ import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExchangeRateServiceImpl implements ExchangeRateService {
@@ -28,7 +29,18 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public List<ExchangeRate> getLastRates(String from, String to, Integer count) {
-        return this.exchangeRateRepository.getLastRates(from, to, count);
+        return this.exchangeRateRepository.getLastRates(from, to, count)
+                .stream().
+                sorted((exchangeRate, t1) -> {
+                            if (exchangeRate.getDate().compareTo(t1.getDate()) > 0) {
+                                return 1;
+                            } else if (exchangeRate.getDate().compareTo(t1.getDate()) < 0) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -40,6 +52,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public List<ExchangeRate> getRates(String date) {
+        return this.exchangeRateRepository.getRates(date);
     }
 
     @Override

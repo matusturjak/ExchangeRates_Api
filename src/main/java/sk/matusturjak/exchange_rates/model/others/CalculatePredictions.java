@@ -1,6 +1,7 @@
 package sk.matusturjak.exchange_rates.model.others;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.Prediction;
@@ -11,11 +12,10 @@ import sk.matusturjak.exchange_rates.service.LatestRateService;
 import sk.matusturjak.exchange_rates.service.PredictionService;
 
 import java.util.List;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 @Component
-public class CalculatePredictions extends TimerTask {
+public class CalculatePredictions {
 
     @Autowired
     private PredictionService predictionService;
@@ -33,12 +33,13 @@ public class CalculatePredictions extends TimerTask {
     private DownloadExchangeRates downloadExchangeRates;
 
     private static String[] currency = {
-            "EUR","CAD","HKD"//,"PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
-            //"BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
-            //"ZAR","USD","MXN","ILS","GBP","KRW","MYR"
+            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
+            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
+            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
     };
 
-    private void calculateAndSave() {
+    @Scheduled(cron = "0 10 17 * *", zone = "Europe/Paris")
+    public void calculateAndSave() {
         this.predictionService.removePredictions();
         for (String i : currency) {
             for (String j : currency) {
@@ -92,14 +93,5 @@ public class CalculatePredictions extends TimerTask {
                     )
             );
         }
-    }
-
-
-    @Override
-    public void run() {
-        System.out.println("start");
-        this.calculateAndSave();
-        this.downloadExchangeRates.downloadAndSaveLatest();
-        System.out.println("end");
     }
 }

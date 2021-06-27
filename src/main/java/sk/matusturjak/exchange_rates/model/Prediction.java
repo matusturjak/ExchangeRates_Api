@@ -3,7 +3,6 @@ package sk.matusturjak.exchange_rates.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "predictions", indexes = {@Index(name = "ind_pred", columnList = "first_country,second_country,method", unique = false)})
@@ -21,6 +20,7 @@ public class Prediction {
     private String date;
 
     @Column(name = "method", nullable = false)
+    @JsonIgnore
     private String method;
 
     public Prediction() {

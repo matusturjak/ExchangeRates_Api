@@ -20,18 +20,16 @@ public class MyDate {
 
     /**
      * Vrati pocet dni medzi dvoma datumami.
-     * @param s1
-     * @param s2
-     * @return
+     * @param s1 prvy datum
+     * @param s2 druhy datum
+     * @return pocet dni medzi datumami
      */
     public int daysBetween(String s1, String s2){
         try {
             Date date1 = this.sdf.parse(s1);
             Date date2 = this.sdf.parse(s2);
             long diff = date2.getTime() - date1.getTime();
-            int days = (int)(diff / (1000*60*60*24));
-
-            return days;
+            return (int)(diff / (1000*60*60*24));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -40,9 +38,9 @@ public class MyDate {
 
     /**
      * Prida ku datumu pocet dni a novy datum vrati.
-     * @param s1
-     * @param numOfDays
-     * @return
+     * @param s1 datum
+     * @param numOfDays pocet dni
+     * @return novy datum
      */
     public String addDays(String s1, int numOfDays) {
         Calendar c = Calendar.getInstance();
@@ -53,8 +51,7 @@ public class MyDate {
         }
 
         c.add(Calendar.DAY_OF_MONTH, numOfDays);
-        String newDate = sdf.format(c.getTime());
-        return newDate;
+        return sdf.format(c.getTime());
     }
 
     public Date addDays(Date date, int numOfDays) {
@@ -67,8 +64,8 @@ public class MyDate {
 
     /**
      * Vrati pocet dni medzi datumom v parametri a datumom 1970-01-01.
-     * @param d1
-     * @return
+     * @param d1 datum
+     * @return pocet dni
      */
     public int getDayNumber(String d1){
         return this.daysBetween("1970-01-01",d1);

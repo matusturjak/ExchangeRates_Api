@@ -17,7 +17,7 @@ public class Rate {
     public Rate() {
     }
 
-    public Rate(String firstCountry, String secondCountry, double value) {
+    Rate(String firstCountry, String secondCountry, double value) {
         this.firstCountry = firstCountry;
         this.secondCountry = secondCountry;
         this.value = value;
@@ -45,5 +45,14 @@ public class Rate {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "Rate{" +
+                "firstCountry='" + firstCountry + '\'' +
+                ", secondCountry='" + secondCountry + '\'' +
+                ", value=" + value +
+                '}';
     }
 }

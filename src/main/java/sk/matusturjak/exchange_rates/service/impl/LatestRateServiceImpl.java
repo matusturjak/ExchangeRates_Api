@@ -7,7 +7,6 @@ import sk.matusturjak.exchange_rates.repository.LatestRateRepository;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class LatestRateServiceImpl implements LatestRateService {
@@ -22,11 +21,12 @@ public class LatestRateServiceImpl implements LatestRateService {
 
     @Override
     public List<LatestRate> getLatestRates(String from) {
-        return this.latestRateRepository
-                .findAll()
-                .stream()
-                .filter(latestRate -> latestRate.getRate().getFirstCountry().equals(from))
-                .collect(Collectors.toList());
+        return this.latestRateRepository.getLatestRates(from);
+    }
+
+    @Override
+    public LatestRate getLatestRate(String from, String to) {
+        return this.latestRateRepository.getLatestRate(from, to);
     }
 
     @Override

@@ -3,7 +3,6 @@ package sk.matusturjak.exchange_rates.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "exchange_rates", indexes = {@Index(name = "ind_date_u", columnList = "first_country,second_country,date", unique = false)})
