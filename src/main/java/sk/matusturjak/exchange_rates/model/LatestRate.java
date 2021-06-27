@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "latest_rates")
+@Table(name = "latest_rates", indexes = {@Index(name = "ind_latest", columnList = "first_country, second_country", unique = false)})
 public class LatestRate {
 
     @Id
@@ -37,5 +37,13 @@ public class LatestRate {
 
     public void setRate(Rate rate) {
         this.rate = rate;
+    }
+
+    @Override
+    public String toString() {
+        return "LatestRate{" +
+                "id=" + id +
+                ", rate=" + rate.toString() +
+                '}';
     }
 }

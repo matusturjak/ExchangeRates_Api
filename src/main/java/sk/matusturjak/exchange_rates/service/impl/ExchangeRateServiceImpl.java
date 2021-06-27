@@ -55,6 +55,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
+    public List<ExchangeRate> getRates(String date) {
+        return this.exchangeRateRepository.getRates(date);
+    }
+
+    @Override
     public List<ExchangeRate> getLatest() {
         return this.exchangeRateRepository.getLatest();
     }

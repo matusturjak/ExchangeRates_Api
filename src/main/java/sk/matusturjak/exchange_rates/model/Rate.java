@@ -46,4 +46,13 @@ public class Rate {
     public void setValue(double value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "Rate{" +
+                "firstCountry='" + firstCountry + '\'' +
+                ", secondCountry='" + secondCountry + '\'' +
+                ", value=" + value +
+                '}';
+    }
 }
