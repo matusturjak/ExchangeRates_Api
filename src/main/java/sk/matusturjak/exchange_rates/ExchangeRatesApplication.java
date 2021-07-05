@@ -25,6 +25,7 @@ public class ExchangeRatesApplication {
 		CalculatePredictions calculatePredictions = run.getBean(CalculatePredictions.class);
 		ExchangeRateService service = run.getBean(ExchangeRateService.class);
 
+		//skuska
 		if(service.getSize() < 1) {
 			try {
 				downloadExchangeRates.downloadAndSaveRatesFromECB();
