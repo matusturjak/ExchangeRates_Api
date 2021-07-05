@@ -24,7 +24,7 @@ public class ExchangeRatesApplication {
 		DownloadExchangeRates downloadExchangeRates = run.getBean(DownloadExchangeRates.class);
 		CalculatePredictions calculatePredictions = run.getBean(CalculatePredictions.class);
 		ExchangeRateService service = run.getBean(ExchangeRateService.class);
-		calculatePredictions.calculateAndSave();
+
 		if(service.getSize() < 1) {
 			try {
 				downloadExchangeRates.downloadAndSaveRatesFromECB();
