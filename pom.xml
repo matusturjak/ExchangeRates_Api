@@ -92,7 +92,33 @@
 			<version>1.4.5</version>
 		</dependency>
 
+		<dependency>
+			<groupId>net.finmath</groupId>
+			<artifactId>finmath-lib</artifactId>
+			<version>3.6.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.renjin.cran/forecast -->
+		<dependency>
+			<groupId>org.renjin.cran</groupId>
+			<artifactId>forecast</artifactId>
+			<version>8.7-b3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.renjin</groupId>
+			<artifactId>renjin-script-engine</artifactId>
+			<version>3.5-beta76</version>
+		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>bedatadriven</id>
+			<name>bedatadriven public repo</name>
+			<url>https://nexus.bedatadriven.com/content/groups/public/</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
@@ -104,6 +130,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -35,8 +35,8 @@ public class LatestRateServiceImpl implements LatestRateService {
     }
 
     @Override
-    public void updateRate(String from, String to, double value) {
-        this.latestRateRepository.updateRate(from, to, value);
+    public void updateRate(String from, String to, double value, double difference) {
+        this.latestRateRepository.updateRate(from, to, value, difference);
     }
 
     @Override

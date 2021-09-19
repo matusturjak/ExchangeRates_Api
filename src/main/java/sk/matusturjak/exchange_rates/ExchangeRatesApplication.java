@@ -6,15 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import sk.matusturjak.exchange_rates.model.others.CalculatePredictions;
 import sk.matusturjak.exchange_rates.model.others.DownloadExchangeRates;
-import sk.matusturjak.exchange_rates.repository.ExchangeRateRepository;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Timer;
 
 @SpringBootApplication
 public class ExchangeRatesApplication {

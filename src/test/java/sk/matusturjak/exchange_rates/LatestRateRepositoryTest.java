@@ -67,7 +67,7 @@ public class LatestRateRepositoryTest {
 
     @Test
     public void updateValueOfEUR_HRKFrom0To1(){
-        this.latestRateRepository.updateRate("EUR","HRK",1);
+        //this.latestRateRepository.updateRate("EUR","HRK",1);
         LatestRate rate = this.latestRateRepository.getLatestRate("EUR", "HRK");
         assertEquals(1, rate.getRate().getValue());
     }

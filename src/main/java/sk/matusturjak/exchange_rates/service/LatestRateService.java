@@ -11,7 +11,7 @@ public interface LatestRateService {
 
     Integer getSize();
 
-    void updateRate(String from, String to, double value);
+    void updateRate(String from, String to, double value, double difference);
     void addRate(LatestRate latestRate);
     void deleteAllRates();
 }

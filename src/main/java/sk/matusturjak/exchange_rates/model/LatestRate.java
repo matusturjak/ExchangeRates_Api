@@ -16,6 +16,8 @@ public class LatestRate {
     @Embedded
     private Rate rate;
 
+    private Double difference;
+
     public LatestRate() {
     }
 
@@ -37,6 +39,14 @@ public class LatestRate {
 
     public void setRate(Rate rate) {
         this.rate = rate;
+    }
+
+    public Double getDifference() {
+        return difference;
+    }
+
+    public void setDifference(Double difference) {
+        this.difference = difference;
     }
 
     @Override

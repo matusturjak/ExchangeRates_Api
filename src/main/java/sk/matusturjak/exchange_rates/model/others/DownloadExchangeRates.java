@@ -179,7 +179,8 @@ public class DownloadExchangeRates {
         latestRates.forEach(latestRate -> {
             LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry());
             if (r != null) {
-                this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue());
+                double diff = r.getRate().getValue() - latestRate.getRate().getValue();
+                this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), diff);
             } else {
                 this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue()));
             }

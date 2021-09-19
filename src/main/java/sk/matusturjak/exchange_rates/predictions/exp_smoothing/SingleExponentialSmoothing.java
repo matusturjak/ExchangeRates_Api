@@ -56,9 +56,9 @@ public class SingleExponentialSmoothing implements ExponentialSmoothing {
      * @return
      */
     @Override
-    public Double[] predict(Double[] data, Double alpha) {
+    public double[] predict(Double[] data, Double alpha) {
         this.fit(data, alpha);
-        Double[] predictions = new Double[this.modelData.length - data.length];
+        double[] predictions = new double[this.modelData.length - data.length];
         predictions[0] = this.modelData[data.length];
         for(int i = 0;i < this.modelData.length - data.length - 1; i++){
             this.modelData[data.length + i + 1] = alpha*this.modelData[data.length + i] + (1 - alpha)*this.st0;
@@ -73,7 +73,7 @@ public class SingleExponentialSmoothing implements ExponentialSmoothing {
      * @return
      */
     @Override
-    public Double getResiduals() {
+    public double getResiduals() {
         return this.mse;
     }
 }
