@@ -4,8 +4,8 @@ import org.json.JSONException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import sk.matusturjak.exchange_rates.model.others.CalculatePredictions;
-import sk.matusturjak.exchange_rates.model.others.DownloadExchangeRates;
+import sk.matusturjak.exchange_rates.model.utils.CalculatePredictions;
+import sk.matusturjak.exchange_rates.model.utils.DownloadExchangeRates;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 
 import java.io.IOException;

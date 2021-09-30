@@ -1,6 +1,5 @@
 package sk.matusturjak.exchange_rates;
 
-import org.json.JSONException;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.LatestRate;
-import sk.matusturjak.exchange_rates.model.others.DownloadExchangeRates;
+import sk.matusturjak.exchange_rates.model.utils.DownloadExchangeRates;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
 

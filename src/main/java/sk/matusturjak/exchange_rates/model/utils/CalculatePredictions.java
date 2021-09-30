@@ -1,11 +1,10 @@
-package sk.matusturjak.exchange_rates.model.others;
+package sk.matusturjak.exchange_rates.model.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.Prediction;
-import sk.matusturjak.exchange_rates.predictions.armagarch.ArmaGarchModel;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.DoubleExponentialSmoothing;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.ExponentialSmoothing;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.SingleExponentialSmoothing;
@@ -34,11 +33,13 @@ public class CalculatePredictions {
     @Autowired
     private DownloadExchangeRates downloadExchangeRates;
 
-    private static String[] currency = {
-            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
-            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
-            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
-    };
+//    private static String[] currency = {
+//            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
+//            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
+//            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
+//    };
+
+    private static String[] currency = {"EUR","CAD","CZK","HUF"};
 
     @Scheduled(cron = "0 10 17 * *", zone = "Europe/Paris")
     public void calculateAndSave() {

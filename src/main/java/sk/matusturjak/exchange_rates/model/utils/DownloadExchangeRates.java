@@ -1,17 +1,12 @@
-package sk.matusturjak.exchange_rates.model.others;
+package sk.matusturjak.exchange_rates.model.utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,8 +25,6 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
@@ -45,11 +38,13 @@ public class DownloadExchangeRates {
 
     private final RestTemplate restTemplate;
 
-    private static String[] currency = {
-            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
-            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
-            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
-    };
+//    private static String[] currency = {
+//            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
+//            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
+//            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
+//    };
+
+    private static String[] currency = {"EUR","CAD","CZK","HUF"};
 
     public DownloadExchangeRates(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
@@ -83,7 +78,7 @@ public class DownloadExchangeRates {
                         String rate = obs.getAttributes().getNamedItem("OBS_VALUE").getNodeValue();
                         String date = obs.getAttributes().getNamedItem("TIME_PERIOD").getNodeValue();
 
-                        if (Integer.parseInt(date.split("-")[0]) >= 2021) {
+                        if (Integer.parseInt(date.split("-")[0]) >= 2018) {
                             this.exchangeRateService.addRate(
                                     new ExchangeRate("EUR", currency[i], Double.parseDouble(rate), date)
                             );

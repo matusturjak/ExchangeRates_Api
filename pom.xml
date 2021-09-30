@@ -92,12 +92,6 @@
 			<version>1.4.5</version>
 		</dependency>
 
-		<dependency>
-			<groupId>net.finmath</groupId>
-			<artifactId>finmath-lib</artifactId>
-			<version>3.6.3</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.renjin.cran/forecast -->
 		<dependency>
 			<groupId>org.renjin.cran</groupId>
@@ -109,6 +103,12 @@
 			<groupId>org.renjin</groupId>
 			<artifactId>renjin-script-engine</artifactId>
 			<version>3.5-beta76</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.renjin.cran</groupId>
+			<artifactId>FinTS</artifactId>
+			<version>0.4-6-b1</version>
 		</dependency>
 	</dependencies>
 

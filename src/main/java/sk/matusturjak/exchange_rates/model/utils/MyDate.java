@@ -1,4 +1,4 @@
-package sk.matusturjak.exchange_rates.model.others;
+package sk.matusturjak.exchange_rates.model.utils;
 
 import org.springframework.stereotype.Component;
 
