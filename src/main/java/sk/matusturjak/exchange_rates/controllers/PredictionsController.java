@@ -13,8 +13,11 @@ import sk.matusturjak.exchange_rates.service.PredictionService;
 @RequestMapping("/prediction")
 public class PredictionsController {
 
-    @Autowired
-    private PredictionService predictionService;
+    private final PredictionService predictionService;
+
+    public PredictionsController(PredictionService predictionService) {
+        this.predictionService = predictionService;
+    }
 
     @GetMapping("/{from}-{to}/{numberOfPredictions}")
     public ResponseEntity getPredictions(@PathVariable("from") String from, @PathVariable("to") String to,

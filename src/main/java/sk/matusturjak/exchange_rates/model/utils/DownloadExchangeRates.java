@@ -29,14 +29,8 @@ import java.util.*;
 
 @Component
 public class DownloadExchangeRates {
-
-    @Autowired
-    private ExchangeRateService exchangeRateService;
-
-    @Autowired
-    private LatestRateService latestRateService;
-
-    private final RestTemplate restTemplate;
+    private final ExchangeRateService exchangeRateService;
+    private final LatestRateService latestRateService;
 
 //    private static String[] currency = {
 //            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
@@ -46,8 +40,9 @@ public class DownloadExchangeRates {
 
     private static String[] currency = {"EUR","CAD","CZK","HUF"};
 
-    public DownloadExchangeRates(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    public DownloadExchangeRates(ExchangeRateService exchangeRateService, LatestRateService latestRateService) {
+        this.exchangeRateService = exchangeRateService;
+        this.latestRateService = latestRateService;
     }
 
     public void downloadAndSaveRatesFromECB() {
@@ -125,7 +120,7 @@ public class DownloadExchangeRates {
     }
 
     @Scheduled(cron = "0 0 17 * *", zone = "Europe/Paris")
-    public void downloadAndSaveLatestRatesFromECB() throws IOException, ParseException {
+    public void downloadAndSaveLatestRatesFromECB() throws Exception {
         List<LatestRate> latestRates = new ArrayList<>();
 
         Document document = Jsoup.connect("https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html").get();

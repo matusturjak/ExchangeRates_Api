@@ -13,8 +13,11 @@ import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 @RequestMapping("/rates")
 public class ExhangeRateController {
 
-    @Autowired
-    private ExchangeRateService exchangeRateService;
+    private final ExchangeRateService exchangeRateService;
+
+    public ExhangeRateController(ExchangeRateService exchangeRateService) {
+        this.exchangeRateService = exchangeRateService;
+    }
 
     @GetMapping("/{from}-{to}/{start_at}/{end_at}")
     public ResponseEntity getRates(@PathVariable("from") String from, @PathVariable("to") String to,

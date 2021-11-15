@@ -25,11 +25,7 @@ public class ExchangeRatesApplication {
 				downloadExchangeRates.downloadAndSaveRatesFromECB();
 				downloadExchangeRates.downloadAndSaveLatestRatesFromECB();
 				calculatePredictions.calculateAndSave();
-			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

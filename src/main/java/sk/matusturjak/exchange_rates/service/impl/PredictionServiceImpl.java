@@ -12,8 +12,11 @@ import java.util.List;
 @Service
 public class PredictionServiceImpl implements PredictionService {
 
-    @Autowired
-    private PredictionsRepository predictionsRepository;
+    private final PredictionsRepository predictionsRepository;
+
+    public PredictionServiceImpl(PredictionsRepository predictionsRepository) {
+        this.predictionsRepository = predictionsRepository;
+    }
 
     @Override
     public List<Prediction> getPredictions(String from, String to, Integer numberOfPredictions) {

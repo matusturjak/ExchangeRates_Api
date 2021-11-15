@@ -37,7 +37,7 @@ public class DownloadExchangeRateTest {
     }
 
     @Test
-    public void downloadRatesFromECB() throws IOException, ParseException {
+    public void downloadRatesFromECB() throws Exception {
         this.downloadExchangeRates.downloadAndSaveRatesFromECB();
         this.downloadExchangeRates.downloadAndSaveLatestRatesFromECB();
         List<LatestRate> latestRates = this.latestRateService.getAllLatestRates();

@@ -14,8 +14,11 @@ import java.util.stream.Collectors;
 @Service
 public class ExchangeRateServiceImpl implements ExchangeRateService {
 
-    @Autowired
-    private ExchangeRateRepository exchangeRateRepository;
+    private final ExchangeRateRepository exchangeRateRepository;
+
+    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository) {
+        this.exchangeRateRepository = exchangeRateRepository;
+    }
 
     @Override
     public void addRate(ExchangeRate exchangeRate) {

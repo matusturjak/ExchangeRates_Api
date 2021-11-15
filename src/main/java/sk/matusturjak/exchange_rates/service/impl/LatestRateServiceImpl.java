@@ -11,8 +11,11 @@ import java.util.List;
 @Service
 public class LatestRateServiceImpl implements LatestRateService {
 
-    @Autowired
-    private LatestRateRepository latestRateRepository;
+    private final LatestRateRepository latestRateRepository;
+
+    public LatestRateServiceImpl(LatestRateRepository latestRateRepository) {
+        this.latestRateRepository = latestRateRepository;
+    }
 
     @Override
     public List<LatestRate> getAllLatestRates() {

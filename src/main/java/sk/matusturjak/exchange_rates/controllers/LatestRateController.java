@@ -11,8 +11,11 @@ import sk.matusturjak.exchange_rates.service.LatestRateService;
 @RequestMapping("/latest")
 public class LatestRateController {
 
-    @Autowired
-    private LatestRateService latestRateService;
+    private final LatestRateService latestRateService;
+
+    public LatestRateController(LatestRateService latestRateService) {
+        this.latestRateService = latestRateService;
+    }
 
     @GetMapping
     public ResponseEntity getAllLatest() {

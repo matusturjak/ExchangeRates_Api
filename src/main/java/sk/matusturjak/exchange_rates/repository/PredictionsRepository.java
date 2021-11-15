@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface PredictionsRepository extends JpaRepository<Prediction, Long> {
     @Query(value = "SELECT * FROM predictions p WHERE p.first_country LIKE ?1 and p.second_country LIKE ?2 AND " +
-            "p.method LIKE CASE WHEN ?3 < 3 THEN \"GARCH\" WHEN ?3 = 3 THEN \"exp3\" WHEN ?3 = 5 THEN \"exp5\" ELSE \"\" END LIMIT ?3", nativeQuery = true)
+            "p.method LIKE CASE WHEN ?3 < 3 THEN \"GARCH\" WHEN ?3 = 3 THEN \"%exp3\" WHEN ?3 = 5 THEN \"%exp5\" ELSE \"\" END LIMIT ?3", nativeQuery = true)
     List<Prediction> getPredictions(String from, String to, Integer numberOfPredictions);
 
     @Modifying

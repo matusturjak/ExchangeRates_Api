@@ -52,7 +52,7 @@ public class ArmaGarchModelTest {
         for (int i = 0; i < values.length; i++) {
             values[i] = list.get(i).getRate().getValue();
         }
-        ArmaGarchModel model = new ArmaGarchModel(times, values);
+        ArmaGarchModel model = new ArmaGarchModel();
         String vector = model.getVector(values);
 
         RenjinScriptEngine engine = new RenjinScriptEngine();
@@ -83,7 +83,8 @@ public class ArmaGarchModelTest {
             values[i] = list.get(i).getRate().getValue();
         }
 
-        ArmaGarchModel model = new ArmaGarchModel(times,values);
+        ArmaGarchModel model = new ArmaGarchModel();
+        model.fittedValues();
     }
 
 
@@ -100,7 +101,7 @@ public class ArmaGarchModelTest {
             values[i] = list.get(i).getRate().getValue();
         }
 
-        ArmaGarchModel model = new ArmaGarchModel(times, values);
+        ArmaGarchModel model = new ArmaGarchModel();
         model.isSerieStacionary();
     }
 }
