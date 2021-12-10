@@ -169,7 +169,7 @@ public class DownloadExchangeRates {
         latestRates.forEach(latestRate -> {
             LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry());
             if (r != null) {
-                double diff = r.getRate().getValue() - latestRate.getRate().getValue();
+                double diff = roundAvoid(r.getRate().getValue() - latestRate.getRate().getValue(), 4);
                 this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), diff);
             } else {
                 this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue()));
@@ -202,5 +202,10 @@ public class DownloadExchangeRates {
                 }
             });
         }
+    }
+
+    private static double roundAvoid(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
     }
 }

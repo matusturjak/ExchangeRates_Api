@@ -99,4 +99,9 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
     public double getResiduals() {
         return this.mse;
     }
+
+    @Override
+    public double[] fittedValues() {
+        return new double[0];
+    }
 }

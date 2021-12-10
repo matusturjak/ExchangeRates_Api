@@ -1,6 +1,5 @@
 package sk.matusturjak.exchange_rates.model.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
@@ -30,7 +29,7 @@ public class CalculatePredictions {
 //            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
 //    };
 
-    private static String[] currency = {"EUR","CAD","CZK","HUF"};
+    private static String[] currency = StaticVariables.currencies;
 
     public CalculatePredictions(PredictionService predictionService, ExchangeRateService exchangeRateService, LatestRateService latestRateService) {
         this.predictionService = predictionService;
@@ -66,12 +65,12 @@ public class CalculatePredictions {
                             double[] ses = singleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[3]), 0.4);
 
-                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, "sexp");
+                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP);
                         } else {
                             double[] des = doubleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[3]), 0.4);
 
-                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, "dexp");
+                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP);
                         }
                     } else {
                         ExponentialSmoothing singleExponentialSmoothing = new SingleExponentialSmoothing(rates.size(), ahead[k]);
@@ -81,12 +80,12 @@ public class CalculatePredictions {
                             double[] ses = singleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[5]), 0.3);
 
-                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, "sexp");
+                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP);
                         } else {
                             double[] des = doubleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                     .collect(Collectors.toList()).toArray(new Double[5]), 0.3);
 
-                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, "dexp");
+                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP);
                         }
                     }
                 }

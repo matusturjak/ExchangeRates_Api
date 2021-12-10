@@ -2,11 +2,12 @@ package sk.matusturjak.exchange_rates.predictions.armagarch;
 
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.sexp.*;
+import sk.matusturjak.exchange_rates.predictions.PredictionModelInterface;
 
 import javax.script.ScriptException;
 import java.util.HashMap;
 
-public class ArmaGarchModel {
+public class ArmaGarchModel implements PredictionModelInterface {
     private HashMap<String, double[]> armaParam;
     private HashMap<String, Double> garchParam;
 
@@ -133,6 +134,7 @@ public class ArmaGarchModel {
         return diffValues;
     }
 
+    @Override
     public double[] fittedValues() {
         double[] residuals = this.armaParam.get("RESIDUALS");
 
@@ -181,7 +183,6 @@ public class ArmaGarchModel {
 
 
         if (diff != null) {
-            //TODO prekonvertovat diff data na realne data
             double[] unDiffFitted = new double[fitted.length];
             unDiffFitted[0] = this.values[0];
             for (int i = 1; i < fitted.length; i++) {

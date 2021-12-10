@@ -1,6 +1,6 @@
 package sk.matusturjak.exchange_rates;
 
-import javafx.application.Application;
+//import javafx.application.Application;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

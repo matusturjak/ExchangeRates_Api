@@ -16,12 +16,17 @@
 
 	<packaging>war</packaging>
 
+	<properties>
+<!--		<java.version>11</java.version>-->
+<!--		<vaadin.version>14.7.5</vaadin.version>-->
+	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-bom</artifactId>
-				<version>21.0.4</version>
+				<version>14.7.5</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -87,12 +92,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<!-- jsoup HTML parser library @ https://jsoup.org/ -->
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.13.1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			&lt;!&ndash; jsoup HTML parser library @ https://jsoup.org/ &ndash;&gt;-->
+<!--			<groupId>org.jsoup</groupId>-->
+<!--			<artifactId>jsoup</artifactId>-->
+<!--			<version>1.13.1</version>-->
+<!--		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/javax.xml.parsers/jaxp-api -->
 		<dependency>
@@ -138,7 +143,12 @@
 
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin</artifactId>
+			<artifactId>vaadin-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.appreciated</groupId>
+			<artifactId>apexcharts</artifactId>
+			<version>2.0.0-beta12</version>
 		</dependency>
 	</dependencies>
 
@@ -148,19 +158,69 @@
 			<name>bedatadriven public repo</name>
 			<url>https://nexus.bedatadriven.com/content/groups/public/</url>
 		</repository>
+		<!-- Main Maven repository -->
+		<repository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- Repository used by many Vaadin add-ons -->
+		<repository>
+			<id>Vaadin Directory</id>
+			<url>https://maven.vaadin.com/vaadin-addons</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
+
+	<pluginRepositories>
+		<!-- Main Maven repository -->
+		<pluginRepository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.springframework.boot</groupId>-->
+<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.0</version>
 			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- Clean build and startup time for Vaadin apps sometimes may exceed
+                     the default Spring Boot's 30sec timeout.  -->
+				<configuration>
+					<wait>500</wait>
+					<maxAttempts>240</maxAttempts>
+				</configuration>
+			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>com.vaadin</groupId>-->
+<!--				<artifactId>vaadin-maven-plugin</artifactId>-->
+<!--				<version>${vaadin.version}</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<goals>-->
+<!--							<goal>prepare-frontend</goal>-->
+<!--							<goal>build-frontend</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 <!--			<plugin>-->
 <!--				<groupId>org.apache.maven.plugins</groupId>-->
 <!--				<artifactId>maven-compiler-plugin</artifactId>-->
