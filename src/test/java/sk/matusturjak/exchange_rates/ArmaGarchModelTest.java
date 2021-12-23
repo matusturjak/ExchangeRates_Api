@@ -84,7 +84,10 @@ public class ArmaGarchModelTest {
         }
 
         ArmaGarchModel model = new ArmaGarchModel();
-        model.fittedValues();
+        model.calculateArmaGarchModel(values);
+
+        double[] fitted = model.fittedValues();
+        int b = 0;
     }
 
 

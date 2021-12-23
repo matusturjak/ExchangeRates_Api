@@ -73,9 +73,9 @@ public class DownloadExchangeRates {
                         String rate = obs.getAttributes().getNamedItem("OBS_VALUE").getNodeValue();
                         String date = obs.getAttributes().getNamedItem("TIME_PERIOD").getNodeValue();
 
-                        if (Integer.parseInt(date.split("-")[0]) >= 2018) {
+                        if (Integer.parseInt(date.split("-")[0]) > 2018) {
                             this.exchangeRateService.addRate(
-                                    new ExchangeRate("EUR", currency[i], Double.parseDouble(rate), date)
+                                    new ExchangeRate("EUR", currency[i], NumHelper.roundAvoid(Double.parseDouble(rate), 4), date)
                             );
                         }
                     }
@@ -92,7 +92,7 @@ public class DownloadExchangeRates {
             // EUR to
             String currName = currency[i];
             eurToI.forEach(exchangeRate -> this.exchangeRateService.addRate(
-                        new ExchangeRate(currName, "EUR", (double) 1 / exchangeRate.getRate().getValue(), exchangeRate.getDate())
+                        new ExchangeRate(currName, "EUR", NumHelper.roundAvoid((double) 1 / exchangeRate.getRate().getValue(), 4), exchangeRate.getDate())
                     )
             );
 
@@ -109,7 +109,7 @@ public class DownloadExchangeRates {
                     }
 
                     for (int k = 0; k < eurToJ.size(); k++) {
-                        double rateIJ = eurToJ.get(k + diff).getRate().getValue() / eurToI.get(k + diff1).getRate().getValue();
+                        double rateIJ = NumHelper.roundAvoid(eurToJ.get(k + diff).getRate().getValue() / eurToI.get(k + diff1).getRate().getValue(), 4);
                         this.exchangeRateService.addRate(
                                 new ExchangeRate(currency[i], currency[j], rateIJ, eurToI.get(k + diff1).getDate())
                         );
@@ -151,7 +151,7 @@ public class DownloadExchangeRates {
                 if (!first.equals(latestRates.get(j).getRate().getSecondCountry())) {
                     double rateEurI = latestRates.get(i).getRate().getValue();
                     double rateEurJ = latestRates.get(j).getRate().getValue();
-                    double rateIJ = rateEurJ / rateEurI;
+                    double rateIJ = NumHelper.roundAvoid(rateEurJ / rateEurI, 4);
 
                     help.add(new LatestRate(latestRates.get(i).getRate().getSecondCountry(), latestRates.get(j).getRate().getSecondCountry(), rateIJ));
                 }
@@ -160,7 +160,7 @@ public class DownloadExchangeRates {
 
         latestRates.forEach(
                 latestRate -> help.add(
-                        new LatestRate(latestRate.getRate().getSecondCountry(), "EUR", (double) 1 / (double) latestRate.getRate().getValue())
+                        new LatestRate(latestRate.getRate().getSecondCountry(), "EUR", NumHelper.roundAvoid((double) 1 / (double) latestRate.getRate().getValue(), 4))
                 )
         );
 
@@ -169,7 +169,7 @@ public class DownloadExchangeRates {
         latestRates.forEach(latestRate -> {
             LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry());
             if (r != null) {
-                double diff = roundAvoid(r.getRate().getValue() - latestRate.getRate().getValue(), 4);
+                double diff = NumHelper.roundAvoid(r.getRate().getValue() - latestRate.getRate().getValue(), 4);
                 this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), diff);
             } else {
                 this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue()));
@@ -202,10 +202,5 @@ public class DownloadExchangeRates {
                 }
             });
         }
-    }
-
-    private static double roundAvoid(double value, int places) {
-        double scale = Math.pow(10, places);
-        return Math.round(value * scale) / scale;
     }
 }

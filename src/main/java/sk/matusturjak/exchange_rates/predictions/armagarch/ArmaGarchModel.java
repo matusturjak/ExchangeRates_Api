@@ -5,6 +5,7 @@ import org.renjin.sexp.*;
 import sk.matusturjak.exchange_rates.predictions.PredictionModelInterface;
 
 import javax.script.ScriptException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ArmaGarchModel implements PredictionModelInterface {
@@ -13,7 +14,6 @@ public class ArmaGarchModel implements PredictionModelInterface {
 
     private boolean isStacionary = false;
 
-    private double[] times;
     private double[] values;
 
     private RenjinScriptEngine engine;
@@ -28,14 +28,12 @@ public class ArmaGarchModel implements PredictionModelInterface {
         this.engine.eval("library('org.renjin.cran:readxl')");
     }
 
-    public ArmaGarchModel(double[] times, double[] values) throws Exception {
+    public ArmaGarchModel(double[] values) throws Exception {
         this();
         this.values = values;
-        this.times = times;
     }
 
-    public void calculateArmaGarchModel(double[] times, double[] values) throws Exception {
-        this.times = times;
+    public ArmaGarchModel calculateArmaGarchModel(double[] values) throws Exception {
         this.values = values;
 
         this.isStacionary = this.isSerieStacionary();
@@ -44,10 +42,11 @@ public class ArmaGarchModel implements PredictionModelInterface {
         if (this.isHeteroskedasticityInResiduals()) {
             this.garchParam = this.getGarchParam();
         }
+        return this;
     }
 
     public boolean isHeteroskedasticityInResiduals() throws ScriptException {
-        String test = "ArchTest(" + this.getVector(this.armaParam.get("RESIDUALS")) + ", lag = 1)";
+        String test = "ArchTest(" + this.getVector(this.armaParam.get("RESIDUALS")) + ", lag=1)";
         Vector result = (Vector) this.engine.eval(test);
         double pValue = result.getElementAsDouble(2);
         return pValue < 0.05;
@@ -139,53 +138,76 @@ public class ArmaGarchModel implements PredictionModelInterface {
         double[] residuals = this.armaParam.get("RESIDUALS");
 
         double[] h = new double[residuals.length];
-        double[] e = new double[residuals.length];
+        double[] e = new double[residuals.length + 1];
+        Arrays.fill(e, 0);
 
-        h[0]=residuals[0]; //TODO variance
-        for (int i = 1; i < residuals.length; i++) {
-            double h_t = this.garchParam.get("OMEGA") +
-                    this.garchParam.get("ALPHA") * (residuals[i - 1] - this.armaParam.get("MEAN")[0]) +
-                    this.garchParam.get("BETA") * h[i - 1];
-            h[i] = h_t;
-            e[i] = h_t * residuals[i];
+        if (garchParam != null) {
+            h[0]=residuals[0]; //TODO variance
+            for (int i = 1; i <= residuals.length; i++) {
+                double h_t = this.garchParam.get("OMEGA") +
+                        this.garchParam.get("ALPHA") * (residuals[i - 1] - this.armaParam.get("MEAN")[0]) +
+                        this.garchParam.get("BETA") * h[i - 1];
+                if (i == residuals.length) {
+                    e[i] = h_t;
+                } else {
+                    h[i] = h_t;
+                    e[i] = h_t * residuals[i];
+                }
+            }
         }
-
-        double sumAR = 0;
-        double sumMA = 0;
 
         double[] ar = this.armaParam.get("AR");
         double[] ma = this.armaParam.get("MA");
 
         double[] diff = this.armaParam.get("DIFFERENCED");
-        double[] fitted = new double[diff == null ? this.values.length : diff.length];
+        double[] fitted = new double[diff == null ? this.values.length + 1 : diff.length + 1];
 
         for (int i = 0; i < fitted.length; i++) {
+            double sumAR = 0;
+            double sumMA = 0;
+
             if (Math.max(ar.length, ma.length) > i) {
                 fitted[i] = diff == null ? this.values[i] : diff[i];
                 continue;
             }
 
-            int pom = 1;
-            for (int j = 0; j < ar.length; j++) {
-                if (diff != null) {
-                    sumAR += ar[j] * diff[i - pom++];
-                } else {
-                    sumAR += ar[j] * this.values[i - pom++];
+            if (i == fitted.length - 1) {
+                int pom = 1;
+                for (int j = 0; j < ar.length; j++) {
+                    if (diff != null) {
+                        sumAR += ar[j] * diff[diff.length - pom++];
+                    } else {
+                        sumAR += ar[j] * this.values[this.values.length - pom++];
+                    }
                 }
-            }
 
-            pom = 1;
-            for (int j = 0; j < ma.length; j++) {
-                sumMA += ma[j] * residuals[i - pom++];
+                pom = 1;
+                for (int j = 0; j < ma.length; j++) {
+                    sumMA += ma[j] * residuals[residuals.length - pom++];
+                }
+            } else {
+                int pom = 1;
+                for (int j = 0; j < ar.length; j++) {
+                    if (diff != null) {
+                        sumAR += ar[j] * diff[i - pom++];
+                    } else {
+                        sumAR += ar[j] * this.values[i - pom++];
+                    }
+                }
+
+                pom = 1;
+                for (int j = 0; j < ma.length; j++) {
+                    sumMA += ma[j] * residuals[i - pom++];
+                }
             }
             fitted[i] = sumAR + sumMA + e[i];
         }
 
 
         if (diff != null) {
-            double[] unDiffFitted = new double[fitted.length];
+            double[] unDiffFitted = new double[fitted.length + 1];
             unDiffFitted[0] = this.values[0];
-            for (int i = 1; i < fitted.length; i++) {
+            for (int i = 1; i <= fitted.length; i++) {
                 unDiffFitted[i] = fitted[i - 1] + this.values[i - 1];
             }
             return unDiffFitted;
@@ -195,8 +217,8 @@ public class ArmaGarchModel implements PredictionModelInterface {
     }
 
     public double predict() {
-
-        return 0;
+        double[] fitted = this.fittedValues();
+        return fitted[fitted.length - 1];
     }
 
 }

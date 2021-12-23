@@ -2,6 +2,7 @@ package sk.matusturjak.exchange_rates.vaadin.charts;
 
 import com.github.appreciated.apexcharts.ApexCharts;
 import com.github.appreciated.apexcharts.ApexChartsBuilder;
+import com.github.appreciated.apexcharts.config.XAxis;
 import com.github.appreciated.apexcharts.config.builder.*;
 import com.github.appreciated.apexcharts.config.chart.Type;
 import com.github.appreciated.apexcharts.config.chart.builder.ZoomBuilder;
@@ -22,7 +23,18 @@ public class AreaChartExample extends Div {
     public AreaChartExample(List<Double> data, List<String> times) {
         Double[] arr = new Double[data.size()];
         arr = data.toArray(arr);
-        ApexCharts areaChart = ApexChartsBuilder.get()
+        ApexCharts apexCharts = this.buildChart(data, times);
+
+        add(apexCharts);
+        setWidth("70%");
+        this.setChart(apexCharts);
+    }
+
+    public ApexCharts buildChart(List<Double> data, List<String> times) {
+        Double[] arr = new Double[data.size()];
+        arr = data.toArray(arr);
+
+        return ApexChartsBuilder.get()
                 .withChart(ChartBuilder.get()
                         .withType(Type.area)
                         .withZoom(ZoomBuilder.get()
@@ -41,14 +53,41 @@ public class AreaChartExample extends Div {
                         .withText("Price Movements")
                         .withAlign(Align.left).build())
                 .withXaxis(XAxisBuilder.get()
-                        .withType(XAxisType.numeric).build())
+                        .withCategories(times).build())
                 .withYaxis(YAxisBuilder.get()
                         .withOpposite(true).build())
                 .withLegend(LegendBuilder.get().withHorizontalAlign(HorizontalAlign.left).build())
                 .build();
-        add(areaChart);
-        setWidth("70%");
-        this.setChart(areaChart);
+    }
+
+    public ApexCharts buildChart2(List<Double> data, List<String> times) {
+        Double[] arr = new Double[data.size()];
+        arr = data.toArray(arr);
+
+        return ApexChartsBuilder.get()
+                .withChart(ChartBuilder.get()
+                        .withType(Type.area)
+                        .withZoom(ZoomBuilder.get()
+                                .withEnabled(false)
+                                .build())
+                        .build())
+                .withDataLabels(DataLabelsBuilder.get()
+                        .withEnabled(false)
+                        .build())
+                .withStroke(StrokeBuilder.get().withCurve(Curve.straight).build())
+                .withSeries(new Series<>("Rate", arr))
+                .withTitle(TitleSubtitleBuilder.get()
+                        .withText("Exchange rates")
+                        .withAlign(Align.left).build())
+                .withSubtitle(TitleSubtitleBuilder.get()
+                        .withText("Price Movements")
+                        .withAlign(Align.left).build())
+                .withXaxis(XAxisBuilder.get()
+                        .withCategories(times).build())
+                .withYaxis(YAxisBuilder.get()
+                        .withOpposite(true).build())
+                .withLegend(LegendBuilder.get().withHorizontalAlign(HorizontalAlign.left).build())
+                .build();
     }
 
     public ApexCharts getChart() {
@@ -59,11 +98,10 @@ public class AreaChartExample extends Div {
         this.chart = chart;
     }
 
-    public void updateChart(List<Double> data) {
-        Double[] arr = new Double[data.size()];
-        arr = data.toArray(arr);
-
-        chart.updateSeries(new Series<>("Rate", arr));
+    public void updateChart(List<Double> data, List<String> times) {
+        remove(this.chart);
+        this.chart = this.buildChart(data, times);
+        add(this.chart);
     }
 }
 

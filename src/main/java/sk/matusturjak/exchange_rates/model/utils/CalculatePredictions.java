@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class CalculatePredictions {
     private final PredictionService predictionService;
     private final ExchangeRateService exchangeRateService;
-    private final LatestRateService latestRateService;
 
     private MyDate date;
 
@@ -31,10 +30,9 @@ public class CalculatePredictions {
 
     private static String[] currency = StaticVariables.currencies;
 
-    public CalculatePredictions(PredictionService predictionService, ExchangeRateService exchangeRateService, LatestRateService latestRateService) {
+    public CalculatePredictions(PredictionService predictionService, ExchangeRateService exchangeRateService) {
         this.predictionService = predictionService;
         this.exchangeRateService = exchangeRateService;
-        this.latestRateService = latestRateService;
         this.date = new MyDate();
     }
 
@@ -45,18 +43,19 @@ public class CalculatePredictions {
         ArmaGarchModel armaGarchModel = new ArmaGarchModel();
         for (String i : currency) {
             for (String j : currency) {
-                List<ExchangeRate> rates = this.exchangeRateService.getAllRates(i, j);
+                List<ExchangeRate> rates = this.exchangeRateService.getLastRates(i, j, StaticVariables.MODEL_DAYS);
                 if (rates == null || rates.size() < 5)
                     continue;
 
-                int[] ahead = {1, 2, 3, 4, 5};
-
-                //ArmaGarchModel armaGarchModel = new ArmaGarchModel(rates.stream().mapToDouble(value -> value.getRate().getValue()).toArray());
+                int[] ahead = {1, 3, 5};
 
                 for (int k = 0; k < ahead.length; k++) {
-                    if (ahead[k] <= 2) {
-//                        double[] predictions = armaGarchModel.predict(ahead[k]);
-//                        this.savePredictions(rates,predictions, i, j, "arma-garch");
+                    if (ahead[k] == 1) {
+                        double[] ratesArray = new double[rates.size()];
+                        for (int l = 0; l < ratesArray.length; l++) ratesArray[l] = rates.get(l).getRate().getValue();
+                        armaGarchModel = armaGarchModel.calculateArmaGarchModel(ratesArray);
+
+                        this.savePredictions(rates.get(rates.size() - 1), new double[]{NumHelper.roundAvoid(armaGarchModel.predict(), 4)}, i, j, StaticVariables.ARMA_GARCH);
                     } else if (ahead[k] == 3) {
                         ExponentialSmoothing singleExponentialSmoothing = new SingleExponentialSmoothing(rates.size(), ahead[k]);
                         ExponentialSmoothing doubleExponentialSmoothing = new DoubleExponentialSmoothing(rates.size(), ahead[k]);

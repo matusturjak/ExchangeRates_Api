@@ -61,7 +61,9 @@ public class HistoricRatesView extends VerticalLayout {
 
         this.showGraphButton = new Button("Show graph", new Icon(VaadinIcon.ENTER));
         this.showGraphButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
-            chart.updateChart(getRates().stream().map(exchangeRate -> exchangeRate.getRate().getValue()).collect(Collectors.toList()));
+            List<ExchangeRate> rates = this.getRates();
+            chart.updateChart(rates.stream().map(rate -> rate.getRate().getValue()).collect(Collectors.toList()),
+                    rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList()));
         });
 
         List<ExchangeRate> rates = this.getRates();

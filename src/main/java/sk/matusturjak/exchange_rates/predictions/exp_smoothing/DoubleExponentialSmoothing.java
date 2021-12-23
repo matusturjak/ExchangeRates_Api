@@ -1,5 +1,7 @@
 package sk.matusturjak.exchange_rates.predictions.exp_smoothing;
 
+import sk.matusturjak.exchange_rates.model.utils.NumHelper;
+
 public class DoubleExponentialSmoothing implements ExponentialSmoothing {
 
     private Double[] modelData;
@@ -76,7 +78,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
         this.fit(data,alpha);
         double[] predictions = new double[this.modelData.length - data.length];
 
-        predictions[0] = this.modelData[data.length];
+        predictions[0] = NumHelper.roundAvoid(this.modelData[data.length], 4);
         for(int i = 0; i < this.modelData.length - data.length - 1; i++){
             this.st0 = alpha*this.modelData[data.length + i] + (1-alpha)*this.st0;
             this.st1 = alpha*this.st0 + (1- alpha)*this.st1;
@@ -85,7 +87,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
             b1 = ((alpha)/(1-alpha))*(this.st0 - this.st1);
 
             this.modelData[data.length + i + 1] = b0 + b1;
-            predictions[i+1] = this.modelData[data.length + i + 1];
+            predictions[i+1] = NumHelper.roundAvoid(this.modelData[data.length + i + 1], 4);
         }
 
         return predictions;
