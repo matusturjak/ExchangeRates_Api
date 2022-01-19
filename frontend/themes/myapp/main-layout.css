@@ -34,3 +34,11 @@
   align-items: center;
   display: flex;
 }
+
+vaadin-vertical-layout {
+  background-color: #f0f4ff;
+}
+
+prism-highlighter-wrapper {
+  background: white;
+}

@@ -15,6 +15,7 @@
     "@polymer/iron-resizable-behavior": "3.0.1",
     "@polymer/iron-scroll-target-behavior": "3.0.1",
     "@polymer/polymer": "3.2.0",
+    "@polymer/prism-element": "3.0.1",
     "@vaadin/vaadin-accordion": "1.2.0",
     "@vaadin/vaadin-app-layout": "2.2.0",
     "@vaadin/vaadin-avatar": "1.0.4",
@@ -107,6 +108,7 @@
       "@polymer/iron-resizable-behavior": "3.0.1",
       "@polymer/iron-scroll-target-behavior": "3.0.1",
       "@polymer/polymer": "3.2.0",
+      "@polymer/prism-element": "3.0.1",
       "@vaadin/vaadin-accordion": "1.2.0",
       "@vaadin/vaadin-app-layout": "2.2.0",
       "@vaadin/vaadin-avatar": "1.0.4",
@@ -184,6 +186,6 @@
       "webpack-dev-server": "3.11.0",
       "webpack-merge": "4.2.2"
     },
-    "hash": "44995c7957d2aca8a4dbe064fba483eed2c5e5d99bd8db44dc245e77f14d7679"
+    "hash": "50bde80ff247d10919c39b31a65c8baa35eb3c56f22f897338b8490c6d5a8dea"
   }
 }

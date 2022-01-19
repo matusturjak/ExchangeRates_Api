@@ -3,6 +3,8 @@ package sk.matusturjak.exchange_rates.vaadin.views.prediction_page;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -11,6 +13,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
+import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.model.utils.StaticVariables;
 import sk.matusturjak.exchange_rates.predictions.armagarch.ArmaGarchModel;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
@@ -73,12 +76,14 @@ public class PredictionRatesView extends VerticalLayout {
         
         this.tabs.addSelectedChangeListener(selectedChangeEvent -> setContent(selectedChangeEvent.getSelectedTab()));
 
-        this.predictionTable = new Grid<>(PredictionTableRow.class);
+        this.predictionTable = new Grid<>(PredictionTableRow.class, false);
+        this.predictionTable.setAllRowsVisible(true);
+//        this.predictionTable.setWidth("35em");
 
-        tabLayout = new VerticalLayout();
-        tabLayout.add(this.predictionTable);
+        this.tabLayout = new VerticalLayout();
+        this.tabLayout.add(this.predictionTable);
 
-        this.oneDay.add(tabLayout);
+//        this.oneDay.add(tabLayout);
 
         this.button = new Button("Predict", new Icon(VaadinIcon.ENTER));
         this.button.addClickListener(buttonClickEvent -> {
@@ -88,15 +93,19 @@ public class PredictionRatesView extends VerticalLayout {
         });
 
         List<ExchangeRate> rates = this.getRates();
-        this.chart = new AreaChartExample(rates.stream().map(rate -> rate.getRate().getValue()).collect(Collectors.toList()),
-                rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList()));
+        this.chart = new AreaChartExample(
+                rates.stream().map(rate -> rate.getRate().getValue()).collect(Collectors.toList()),
+                rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList()),
+                this.firstCurr.getValue() + "/" + this.secondCurr.getValue() + "    " + rates.get(rates.size() - 1).getRate().getValue()
+        );
 
         setContent(this.tabs.getSelectedTab());
 
+        add(new H1("Predictions"));
         add(currLayout);
         add(this.button);
-//        add(this.oneDay, this.threeDays, this.fiveDays);
-        add(this.tabs, this.tabLayout);
+        add(this.tabs);
+        add(this.tabLayout);
         add(this.chart);
 
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -134,7 +143,7 @@ public class PredictionRatesView extends VerticalLayout {
 
         values.addAll(list.stream().map(PredictionTableRow::getValue).collect(Collectors.toList()));
         times.addAll(list.stream().map(PredictionTableRow::getDate).collect(Collectors.toList()));
-        this.chart.updateChart(values, times);
+        this.chart.updateChart(values, times, this.firstCurr.getValue() + "/" + this.secondCurr.getValue() + "    " + values.get(values.size() - 1));
     }
 
     public List<ExchangeRate> getRates() {

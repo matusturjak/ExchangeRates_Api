@@ -9,10 +9,13 @@ import com.github.appreciated.apexcharts.config.chart.builder.ZoomBuilder;
 import com.github.appreciated.apexcharts.config.legend.HorizontalAlign;
 import com.github.appreciated.apexcharts.config.subtitle.Align;
 import com.github.appreciated.apexcharts.config.stroke.Curve;
+import com.github.appreciated.apexcharts.config.subtitle.Style;
 import com.github.appreciated.apexcharts.config.xaxis.XAxisType;
 import com.github.appreciated.apexcharts.helper.Series;
 import com.vaadin.flow.component.html.Div;
+import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -20,17 +23,15 @@ import java.util.stream.IntStream;
 public class AreaChartExample extends Div {
     private ApexCharts chart;
 
-    public AreaChartExample(List<Double> data, List<String> times) {
-        Double[] arr = new Double[data.size()];
-        arr = data.toArray(arr);
-        ApexCharts apexCharts = this.buildChart(data, times);
+    public AreaChartExample(List<Double> data, List<String> times, String legend) {
+        ApexCharts apexCharts = this.buildChart(data, times, legend);
 
         add(apexCharts);
         setWidth("70%");
         this.setChart(apexCharts);
     }
 
-    public ApexCharts buildChart(List<Double> data, List<String> times) {
+    public ApexCharts buildChart(List<Double> data, List<String> times, String legend) {
         Double[] arr = new Double[data.size()];
         arr = data.toArray(arr);
 
@@ -47,47 +48,26 @@ public class AreaChartExample extends Div {
                 .withStroke(StrokeBuilder.get().withCurve(Curve.straight).build())
                 .withSeries(new Series<>("Rate", arr))
                 .withTitle(TitleSubtitleBuilder.get()
-                        .withText("Exchange rates")
+                        .withText(legend)
                         .withAlign(Align.left).build())
                 .withSubtitle(TitleSubtitleBuilder.get()
-                        .withText("Price Movements")
+                        .withText("" + NumHelper.roundAvoid(data.get(data.size() - 1) - data.get(data.size() - 2),4))
+                        .withStyle(this.setStyleOfText(data.get(data.size() - 1) > data.get(data.size() - 2)))
                         .withAlign(Align.left).build())
                 .withXaxis(XAxisBuilder.get()
                         .withCategories(times).build())
                 .withYaxis(YAxisBuilder.get()
                         .withOpposite(true).build())
                 .withLegend(LegendBuilder.get().withHorizontalAlign(HorizontalAlign.left).build())
+                .withColors(data.get(data.size() - 1) > data.get(data.size() - 2) ? "#00FF22" : "#FF0000")
                 .build();
     }
 
-    public ApexCharts buildChart2(List<Double> data, List<String> times) {
-        Double[] arr = new Double[data.size()];
-        arr = data.toArray(arr);
-
-        return ApexChartsBuilder.get()
-                .withChart(ChartBuilder.get()
-                        .withType(Type.area)
-                        .withZoom(ZoomBuilder.get()
-                                .withEnabled(false)
-                                .build())
-                        .build())
-                .withDataLabels(DataLabelsBuilder.get()
-                        .withEnabled(false)
-                        .build())
-                .withStroke(StrokeBuilder.get().withCurve(Curve.straight).build())
-                .withSeries(new Series<>("Rate", arr))
-                .withTitle(TitleSubtitleBuilder.get()
-                        .withText("Exchange rates")
-                        .withAlign(Align.left).build())
-                .withSubtitle(TitleSubtitleBuilder.get()
-                        .withText("Price Movements")
-                        .withAlign(Align.left).build())
-                .withXaxis(XAxisBuilder.get()
-                        .withCategories(times).build())
-                .withYaxis(YAxisBuilder.get()
-                        .withOpposite(true).build())
-                .withLegend(LegendBuilder.get().withHorizontalAlign(HorizontalAlign.left).build())
-                .build();
+    private Style setStyleOfText(boolean diff) {
+        Style style = new Style();
+        style.setColor(diff ? "#00FF22" : "#FF0000");
+        style.setFontSize("20px");
+        return style;
     }
 
     public ApexCharts getChart() {
@@ -98,9 +78,9 @@ public class AreaChartExample extends Div {
         this.chart = chart;
     }
 
-    public void updateChart(List<Double> data, List<String> times) {
+    public void updateChart(List<Double> data, List<String> times, String legend) {
         remove(this.chart);
-        this.chart = this.buildChart(data, times);
+        this.chart = this.buildChart(data, times, legend);
         add(this.chart);
     }
 }

@@ -5,6 +5,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -56,25 +57,30 @@ public class HistoricRatesView extends VerticalLayout {
         this.dateFrom = new DatePicker("Start date");
         this.dateTo = new DatePicker("End date");
 
-        this.dateFrom.setValue(LocalDate.of(2021,1,1));
+        this.dateFrom.setValue(LocalDate.now().minusMonths(1));
         this.dateTo.setValue(LocalDate.now());
 
         this.showGraphButton = new Button("Show graph", new Icon(VaadinIcon.ENTER));
         this.showGraphButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
             List<ExchangeRate> rates = this.getRates();
-            chart.updateChart(rates.stream().map(rate -> rate.getRate().getValue()).collect(Collectors.toList()),
-                    rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList()));
+            chart.updateChart(
+                    rates.stream().map(rate -> rate.getRate().getValue()).collect(Collectors.toList()),
+                    rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList()),
+                    this.firstCurr.getValue() + "/" + this.secondCurr.getValue() + "    " + rates.get(rates.size() - 1).getRate().getValue()
+            );
         });
 
         List<ExchangeRate> rates = this.getRates();
         this.chart = new AreaChartExample(
                 rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue()).collect(Collectors.toList()),
-                rates.stream().map(exchangeRate -> exchangeRate.getDate()).collect(Collectors.toList())
-        );;
+                rates.stream().map(exchangeRate -> exchangeRate.getDate()).collect(Collectors.toList()),
+                this.firstCurr.getValue() + "/" + this.secondCurr.getValue() + "    " + rates.get(rates.size() - 1).getRate().getValue()
+        );
 
         layoutCurr.add(this.firstCurr, this.secondCurr);
         layoutDate.add(this.dateFrom, this.dateTo);
 
+        add(new H1("Historical rates"));
         add(layoutCurr, layoutDate);
         add(this.showGraphButton);
         add(this.chart);
