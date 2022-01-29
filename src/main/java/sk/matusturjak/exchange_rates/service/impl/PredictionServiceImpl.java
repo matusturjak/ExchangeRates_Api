@@ -34,8 +34,14 @@ public class PredictionServiceImpl implements PredictionService {
     }
 
     @Override
-    public void updatePredictions(String from, String to, String method, double value, Date date) {
-        this.predictionsRepository.updatePredictions(from, to, method, value, date);
+    public void updatePredictions(Prediction prediction) {
+        this.predictionsRepository.updatePredictions(
+                prediction.getRate().getFirstCountry(),
+                prediction.getRate().getSecondCountry(),
+                prediction.getMethod(),
+                prediction.getRate().getValue(),
+                prediction.getDate()
+        );
     }
 
     @Override

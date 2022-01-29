@@ -17,7 +17,7 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
     @Query(value = "SELECT * FROM exchange_rates e WHERE e.first_country = ?1 and e.second_country = ?2 ORDER BY e.date DESC LIMIT ?3", nativeQuery = true)
     List<ExchangeRate> getLastRates(String from, String to, Integer count);
 
-    @Query(value = "SELECT * FROM exchange_rates e WHERE e.first_country = ?1 and e.second_country = ?2 AND e.date BETWEEN ?3 AND ?4", nativeQuery = true)
+    @Query(value = "SELECT * FROM exchange_rates e WHERE e.first_country = ?1 and e.second_country = ?2 AND STR_TO_DATE(e.date,'%Y-%m-%d') BETWEEN ?3 AND ?4", nativeQuery = true)
     List<ExchangeRate> getRates(String from, String to, Date start_at, Date end_at);
 
     @Query(value = "SELECT * FROM exchange_rates e WHERE e.date LIKE ?1", nativeQuery = true)

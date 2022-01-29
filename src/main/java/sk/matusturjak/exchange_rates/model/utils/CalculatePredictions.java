@@ -3,13 +3,14 @@ package sk.matusturjak.exchange_rates.model.utils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
+import sk.matusturjak.exchange_rates.model.ModelOutput;
 import sk.matusturjak.exchange_rates.model.Prediction;
 import sk.matusturjak.exchange_rates.predictions.armagarch.ArmaGarchModel;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.DoubleExponentialSmoothing;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.ExponentialSmoothing;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.SingleExponentialSmoothing;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
-import sk.matusturjak.exchange_rates.service.LatestRateService;
+import sk.matusturjak.exchange_rates.service.ModelOutputService;
 import sk.matusturjak.exchange_rates.service.PredictionService;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class CalculatePredictions {
     private final PredictionService predictionService;
     private final ExchangeRateService exchangeRateService;
+    private final ModelOutputService modelOutputService;
 
     private MyDate date;
 
@@ -30,9 +32,10 @@ public class CalculatePredictions {
 
     private static String[] currency = StaticVariables.currencies;
 
-    public CalculatePredictions(PredictionService predictionService, ExchangeRateService exchangeRateService) {
+    public CalculatePredictions(PredictionService predictionService, ExchangeRateService exchangeRateService, ModelOutputService modelOutputService) {
         this.predictionService = predictionService;
         this.exchangeRateService = exchangeRateService;
+        this.modelOutputService = modelOutputService;
         this.date = new MyDate();
     }
 
@@ -55,36 +58,39 @@ public class CalculatePredictions {
                         for (int l = 0; l < ratesArray.length; l++) ratesArray[l] = rates.get(l).getRate().getValue();
                         armaGarchModel = armaGarchModel.calculateArmaGarchModel(ratesArray);
 
-                        this.savePredictions(rates.get(rates.size() - 1), new double[]{NumHelper.roundAvoid(armaGarchModel.predict(), 4)}, i, j, StaticVariables.ARMA_GARCH);
+                        double armaPrediction = NumHelper.roundAvoid(armaGarchModel.predict(), 4);
+                        this.savePredictions(
+                                rates.get(rates.size() - 1), new double[]{armaPrediction}, i, j, StaticVariables.ARMA_GARCH, armaGarchModel.getResiduals(), armaGarchModel.getSigma(), armaGarchModel.getFittedValues()
+                        );
                     } else if (ahead[k] == 3) {
                         ExponentialSmoothing singleExponentialSmoothing = new SingleExponentialSmoothing(rates.size(), ahead[k]);
                         ExponentialSmoothing doubleExponentialSmoothing = new DoubleExponentialSmoothing(rates.size(), ahead[k]);
 
-                        if (singleExponentialSmoothing.getResiduals() < doubleExponentialSmoothing.getResiduals()) {
+                        if (singleExponentialSmoothing.getMSE() < doubleExponentialSmoothing.getMSE()) {
                             double[] ses = singleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[3]), 0.4);
 
-                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP);
+                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP, singleExponentialSmoothing.getResiduals(), null, singleExponentialSmoothing.getFitted());
                         } else {
                             double[] des = doubleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[3]), 0.4);
 
-                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP);
+                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP, doubleExponentialSmoothing.getResiduals(), null, doubleExponentialSmoothing.getFitted());
                         }
                     } else {
                         ExponentialSmoothing singleExponentialSmoothing = new SingleExponentialSmoothing(rates.size(), ahead[k]);
                         ExponentialSmoothing doubleExponentialSmoothing = new DoubleExponentialSmoothing(rates.size(), ahead[k]);
 
-                        if (singleExponentialSmoothing.getResiduals() < doubleExponentialSmoothing.getResiduals()) {
+                        if (singleExponentialSmoothing.getMSE() < doubleExponentialSmoothing.getMSE()) {
                             double[] ses = singleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[5]), 0.3);
 
-                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP);
+                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP, singleExponentialSmoothing.getResiduals(), null, singleExponentialSmoothing.getFitted());
                         } else {
                             double[] des = doubleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                     .collect(Collectors.toList()).toArray(new Double[5]), 0.3);
 
-                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP);
+                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP, doubleExponentialSmoothing.getResiduals(), null, doubleExponentialSmoothing.getFitted());
                         }
                     }
                 }
@@ -92,13 +98,24 @@ public class CalculatePredictions {
         }
     }
 
-    private void savePredictions(ExchangeRate actualRate, double[] arr, String firstCountry, String secondCountry, String method) {
+    private void savePredictions(ExchangeRate actualRate, double[] arr, String firstCountry, String secondCountry, String method, String residuals, String sigma, String fitted) {
         for (int l = 0; l < arr.length; l++) {
-            this.predictionService.addPrediction(
-                    new Prediction(firstCountry, secondCountry, arr[l],
-                            this.date.addDays(actualRate.getDate(), l + 1), method + (arr.length)
-                    )
-            );
+            Prediction prediction = this.predictionService.findPrediction(firstCountry, secondCountry, method);
+            if (prediction == null) {
+                Prediction newPrediction = new Prediction(firstCountry, secondCountry, arr[l], this.date.addDays(actualRate.getDate(), l + 1), method + (arr.length));
+                this.predictionService.addPrediction(newPrediction);
+            } else {
+                Prediction updatedPrediction = new Prediction(firstCountry, secondCountry, arr[l], this.date.addDays(actualRate.getDate(), l + 1), method + (arr.length));
+                this.predictionService.updatePredictions(updatedPrediction);
+            }
+
+            ModelOutput modelOutput = this.modelOutputService.findModelOutput(firstCountry, secondCountry, method + (arr.length));
+            ModelOutput toBeAdded = new ModelOutput(method + (arr.length), firstCountry, secondCountry, residuals, sigma, fitted);
+            if (modelOutput == null) {
+                this.modelOutputService.addModelOutput(toBeAdded);
+            } else {
+                this.modelOutputService.updateModelOutput(toBeAdded);
+            }
         }
     }
 }

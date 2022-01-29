@@ -11,5 +11,5 @@ public interface PredictionService {
 
     void removePredictions();
     void addPrediction(Prediction prediction);
-    void updatePredictions(String from, String to, String method, double value, Date date);
+    void updatePredictions(Prediction prediction);
 }

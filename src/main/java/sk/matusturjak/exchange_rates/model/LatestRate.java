@@ -16,6 +16,7 @@ public class LatestRate {
     @Embedded
     private Rate rate;
 
+    @Column(name = "difference")
     private Double difference;
 
     public LatestRate() {
@@ -23,6 +24,11 @@ public class LatestRate {
 
     public LatestRate(String firstCountry, String secondCountry, double value) {
         this.rate = new Rate(firstCountry, secondCountry, value);
+    }
+
+    public LatestRate(String firstCountry, String secondCountry, double value, double difference) {
+        this(firstCountry, secondCountry, value);
+        this.difference = difference;
     }
 
     public Long getId() {

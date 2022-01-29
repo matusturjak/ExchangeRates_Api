@@ -6,5 +6,5 @@ public class StaticVariables {
     public static String SINGLE_EXP="sexp";
     public static String DOUBLE_EXP="dexp";
 
-    public static int MODEL_DAYS = 365;
+    public static int MODEL_DAYS = 100365;
 }

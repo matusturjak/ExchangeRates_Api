@@ -2,7 +2,6 @@ package sk.matusturjak.exchange_rates.vaadin.charts;
 
 import com.github.appreciated.apexcharts.ApexCharts;
 import com.github.appreciated.apexcharts.ApexChartsBuilder;
-import com.github.appreciated.apexcharts.config.XAxis;
 import com.github.appreciated.apexcharts.config.builder.*;
 import com.github.appreciated.apexcharts.config.chart.Type;
 import com.github.appreciated.apexcharts.config.chart.builder.ZoomBuilder;
@@ -10,20 +9,16 @@ import com.github.appreciated.apexcharts.config.legend.HorizontalAlign;
 import com.github.appreciated.apexcharts.config.subtitle.Align;
 import com.github.appreciated.apexcharts.config.stroke.Curve;
 import com.github.appreciated.apexcharts.config.subtitle.Style;
-import com.github.appreciated.apexcharts.config.xaxis.XAxisType;
 import com.github.appreciated.apexcharts.helper.Series;
 import com.vaadin.flow.component.html.Div;
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 
-import java.awt.*;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.IntStream;
 
-public class AreaChartExample extends Div {
+public class ExchangeRatesChart extends Div {
     private ApexCharts chart;
 
-    public AreaChartExample(List<Double> data, List<String> times, String legend) {
+    public ExchangeRatesChart(List<Double> data, List<String> times, String legend) {
         ApexCharts apexCharts = this.buildChart(data, times, legend);
 
         add(apexCharts);

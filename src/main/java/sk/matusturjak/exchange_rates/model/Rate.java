@@ -5,10 +5,10 @@ import javax.persistence.*;
 @Embeddable
 public class Rate {
 
-    @Column(name = "first_country", nullable = false)
+    @Column(name = "first_country", nullable = false, columnDefinition = "VARCHAR(3)")
     private String firstCountry;
 
-    @Column(name = "second_country", nullable = false)
+    @Column(name = "second_country", nullable = false, columnDefinition = "VARCHAR(3)")
     private String secondCountry;
 
     @Column(name = "value", nullable = false)

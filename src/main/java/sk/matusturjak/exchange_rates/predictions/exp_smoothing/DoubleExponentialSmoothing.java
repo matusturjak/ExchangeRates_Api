@@ -2,6 +2,10 @@ package sk.matusturjak.exchange_rates.predictions.exp_smoothing;
 
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class DoubleExponentialSmoothing implements ExponentialSmoothing {
 
     private Double[] modelData;
@@ -10,6 +14,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
     private Double st0;
     private Double st1;
     private Double mse;
+    private String residuals;
 
     /**
      * Parametricky konstruktor triedy.
@@ -23,6 +28,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
         this.st0 = 0d;
         this.st1 = 0d;
         this.mse = 0d;
+        this.residuals = "";
     }
 
     /**
@@ -62,7 +68,9 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
 
         for(int i=0; i < data.length; i++) {
             this.mse += Math.pow(data[i] - this.modelData[i],2);
+            this.residuals = this.residuals + NumHelper.roundAvoid(data[i] - this.modelData[i],4) + ",";
         }
+        this.residuals = this.residuals.substring(0, this.residuals.length() - 1);
         this.mse = this.mse/data.length;
     }
 
@@ -98,12 +106,23 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
      * @return
      */
     @Override
-    public double getResiduals() {
+    public double getMSE() {
         return this.mse;
     }
 
     @Override
     public double[] fittedValues() {
         return new double[0];
+    }
+
+    @Override
+    public String getResiduals() {
+        return residuals;
+    }
+
+    @Override
+    public String getFitted() {
+        return Stream.<Double[]>of(this.modelData).map(Arrays::toString).collect(Collectors.joining(","))
+                .replace("[", "").replace("]","").replace(" ", "");
     }
 }

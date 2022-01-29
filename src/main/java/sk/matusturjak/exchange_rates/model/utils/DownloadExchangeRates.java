@@ -73,7 +73,7 @@ public class DownloadExchangeRates {
                         String rate = obs.getAttributes().getNamedItem("OBS_VALUE").getNodeValue();
                         String date = obs.getAttributes().getNamedItem("TIME_PERIOD").getNodeValue();
 
-                        if (Integer.parseInt(date.split("-")[0]) > 2018) {
+                        if (Integer.parseInt(date.split("-")[0]) >= 2017) {
                             this.exchangeRateService.addRate(
                                     new ExchangeRate("EUR", currency[i], NumHelper.roundAvoid(Double.parseDouble(rate), 4), date)
                             );
@@ -172,7 +172,7 @@ public class DownloadExchangeRates {
                 double diff = NumHelper.roundAvoid(r.getRate().getValue() - latestRate.getRate().getValue(), 4);
                 this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), diff);
             } else {
-                this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue()));
+                this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), 0));
             }
         });
 

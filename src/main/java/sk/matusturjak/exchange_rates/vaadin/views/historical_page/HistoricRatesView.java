@@ -14,7 +14,7 @@ import com.vaadin.flow.router.Route;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.utils.StaticVariables;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
-import sk.matusturjak.exchange_rates.vaadin.charts.AreaChartExample;
+import sk.matusturjak.exchange_rates.vaadin.charts.ExchangeRatesChart;
 import sk.matusturjak.exchange_rates.vaadin.views.MainLayout;
 
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ public class HistoricRatesView extends VerticalLayout {
 
     private ExchangeRateService exchangeRateService;
 
-    private AreaChartExample chart;
+    private ExchangeRatesChart chart;
 
     public HistoricRatesView(ExchangeRateService exchangeRateService) {
         HorizontalLayout layoutCurr = new HorizontalLayout();
@@ -57,7 +57,7 @@ public class HistoricRatesView extends VerticalLayout {
         this.dateFrom = new DatePicker("Start date");
         this.dateTo = new DatePicker("End date");
 
-        this.dateFrom.setValue(LocalDate.now().minusMonths(1));
+        this.dateFrom.setValue(LocalDate.now().minusMonths(12));
         this.dateTo.setValue(LocalDate.now());
 
         this.showGraphButton = new Button("Show graph", new Icon(VaadinIcon.ENTER));
@@ -71,11 +71,12 @@ public class HistoricRatesView extends VerticalLayout {
         });
 
         List<ExchangeRate> rates = this.getRates();
-        this.chart = new AreaChartExample(
+        this.chart = new ExchangeRatesChart(
                 rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue()).collect(Collectors.toList()),
                 rates.stream().map(exchangeRate -> exchangeRate.getDate()).collect(Collectors.toList()),
                 this.firstCurr.getValue() + "/" + this.secondCurr.getValue() + "    " + rates.get(rates.size() - 1).getRate().getValue()
         );
+        this.chart.setWidthFull();
 
         layoutCurr.add(this.firstCurr, this.secondCurr);
         layoutDate.add(this.dateFrom, this.dateTo);
@@ -92,6 +93,10 @@ public class HistoricRatesView extends VerticalLayout {
     }
 
     public List<ExchangeRate> getRates() {
+        String s1 = this.firstCurr.getValue();
+        String s2 = this.secondCurr.getValue();
+        String l1 = formatDate(this.dateFrom.getValue());
+        String l2 = formatDate(this.dateTo.getValue());
         return this.exchangeRateService.getRates(this.firstCurr.getValue(), this.secondCurr.getValue(), formatDate(this.dateFrom.getValue()), formatDate(this.dateTo.getValue()));
     }
 
