@@ -145,6 +145,7 @@ public class ArmaGarchModel implements PredictionModelInterface {
         double[] residuals = this.armaParam.get("RESIDUALS");
 
         double[] h = new double[residuals.length];
+        double[] z = new double[residuals.length];
         double[] e = new double[residuals.length];
 //        Arrays.fill(e, 0);
 
@@ -160,12 +161,13 @@ public class ArmaGarchModel implements PredictionModelInterface {
                 if (i < residuals.length) {
                     h[i] = h_t;
                 }
-                e[i - 1] = residuals[i - 1] / Math.sqrt(h[i - 1]);
+                z[i - 1] = residuals[i - 1] / Math.sqrt(h[i - 1]);
+                e[i - 1] = z[i - 1] * Math.sqrt(h[i - 1]);
             }
         }
 
         this.setSigma(listSigma);
-        this.armaParam.replace("SRESIDUALS", e);
+        this.armaParam.replace("SRESIDUALS", z);
 
         double[] ar = this.armaParam.get("AR");
         double[] ma = this.armaParam.get("MA");
@@ -237,7 +239,7 @@ public class ArmaGarchModel implements PredictionModelInterface {
     public String getFittedValues() {
         String arr = "";
 
-        for (int i = 0; i < this.fittedValues.length; i++) arr = arr + NumHelper.roundAvoid(this.fittedValues[i], 4) + ",";
+        for (int i = 0; i < this.fittedValues.length; i++) arr = arr + NumHelper.roundAvoid(this.fittedValues[i], 6) + ",";
         return arr.substring(0, arr.length() - 1);
     }
 

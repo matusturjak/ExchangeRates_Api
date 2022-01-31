@@ -194,7 +194,7 @@ public class PredictionRatesView extends VerticalLayout {
                 this.firstCurr.getValue(),
                 this.secondCurr.getValue(),
                 num,
-                rates.size() + num
+                rates.size() + num + 1
         );
         List<String> times = rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList());
 

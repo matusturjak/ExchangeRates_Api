@@ -73,7 +73,7 @@ public class DownloadExchangeRates {
                         String rate = obs.getAttributes().getNamedItem("OBS_VALUE").getNodeValue();
                         String date = obs.getAttributes().getNamedItem("TIME_PERIOD").getNodeValue();
 
-                        if (Integer.parseInt(date.split("-")[0]) >= 2017) {
+                        if (Integer.parseInt(date.split("-")[0]) >= 2010) {
                             this.exchangeRateService.addRate(
                                     new ExchangeRate("EUR", currency[i], NumHelper.roundAvoid(Double.parseDouble(rate), 4), date)
                             );
