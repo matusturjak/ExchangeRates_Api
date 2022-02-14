@@ -5,6 +5,7 @@ public class StaticVariables {
     public static String ARMA_GARCH="arma_garch";
     public static String SINGLE_EXP="sexp";
     public static String DOUBLE_EXP="dexp";
+    public static String EXP_SMOOTHING="exp";
 
     public static int MODEL_DAYS = 100365;
 }

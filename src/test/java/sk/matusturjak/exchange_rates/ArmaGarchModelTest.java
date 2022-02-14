@@ -14,6 +14,8 @@ import sk.matusturjak.exchange_rates.predictions.armagarch.ArmaGarchModel;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 
 import javax.script.ScriptException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 @SpringBootTest
@@ -70,7 +72,7 @@ public class ArmaGarchModelTest {
 
     @Test
     public void createArmaGarchModelTest() throws Exception {
-        List<ExchangeRate> list = rateService.getAllRates("EUR", "CZK");
+        List<ExchangeRate> list = rateService.getAllRates("EUR", "CAD");
 
         double sum = list.stream().mapToDouble(value -> value.getRate().getValue()).sum();
         double[] times = new double[list.size()];
@@ -88,6 +90,18 @@ public class ArmaGarchModelTest {
 
         double[] fitted = model.fittedValues();
         int b = 0;
+    }
+
+    @Test
+    public void testSaveToFile() throws IOException {
+        FileWriter myWriter = new FileWriter("C:\\Users\\Matúš\\Documents\\prognostika\\eurcad.csv");
+
+        List<ExchangeRate> list = rateService.getAllRates("EUR", "CAD");
+        for (ExchangeRate rate : list) {
+            String s = rate.getRate().getValue() + "";
+            myWriter.write(rate.getDate() + ";" + s.replace('.', ',') + "\n");
+        }
+        myWriter.close();
     }
 
 

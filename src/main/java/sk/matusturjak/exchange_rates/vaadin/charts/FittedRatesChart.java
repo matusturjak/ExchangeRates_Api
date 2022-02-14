@@ -35,7 +35,7 @@ public class FittedRatesChart extends Div {
 
         return ApexChartsBuilder.get()
                 .withChart(ChartBuilder.get()
-                        .withType(Type.area)
+                        .withType(Type.line)
                         .withZoom(ZoomBuilder.get()
                                 .withEnabled(false)
                                 .build())

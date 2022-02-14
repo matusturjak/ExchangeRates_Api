@@ -122,6 +122,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
 
     @Override
     public String getFitted() {
+        for (int i = 0; i < this.modelData.length; i++) this.modelData[i] = NumHelper.roundAvoid(this.modelData[i], 4);
         return Stream.<Double[]>of(this.modelData).map(Arrays::toString).collect(Collectors.joining(","))
                 .replace("[", "").replace("]","").replace(" ", "");
     }

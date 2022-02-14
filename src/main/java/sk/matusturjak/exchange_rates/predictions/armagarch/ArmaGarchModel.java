@@ -28,7 +28,6 @@ public class ArmaGarchModel implements PredictionModelInterface {
         this.engine.eval("library('org.renjin.cran:tseries')");
         this.engine.eval("library('org.renjin.cran:FinTS')");
         this.engine.eval("library('org.renjin.cran:TSA')");
-        this.engine.eval("library('org.renjin.cran:tseries')");
         this.engine.eval("library('org.renjin.cran:readxl')");
         this.sigma = "";
     }
@@ -63,7 +62,7 @@ public class ArmaGarchModel implements PredictionModelInterface {
         Vector result = (Vector) this.engine.eval(test);
         double pValue = result.getElementAsDouble(3);
 
-        return pValue <= 0.05;
+        return pValue <= 0.01;
     }
 
     public HashMap<String, double[]> getArmaParam() throws ScriptException {
@@ -107,9 +106,9 @@ public class ArmaGarchModel implements PredictionModelInterface {
     public HashMap<String, Double> getGarchParam() throws Exception {
         HashMap<String, Double> map = new HashMap<>();
 
-        if (this.armaParam.get("AR").length == 0 && this.armaParam.get("MA").length == 0) {
-            return null;
-        }
+//        if (this.armaParam.get("AR").length == 0 && this.armaParam.get("MA").length == 0) {
+//            return null;
+//        }
         this.engine.eval(new java.io.FileReader("src/main/scripts/mle_garch.R"));
 
         String script = "mlef<-optim(para, garch_loglik, gr = NULL,method = c(\"Nelder-Mead\"),hessian=FALSE," +
@@ -153,9 +152,18 @@ public class ArmaGarchModel implements PredictionModelInterface {
         if (garchParam != null) {
             h[0]=this.garchParam.get("OMEGA") / (1 - this.garchParam.get("BETA") - this.garchParam.get("ALPHA")); //TODO variance
             for (int i = 1; i <= residuals.length; i++) {
-                double h_t = this.garchParam.get("OMEGA") +
-                        this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1] - this.armaParam.get("MEAN")[0], 2) +
-                        this.garchParam.get("BETA") * h[i - 1];
+                double h_t = 0.0d;
+                //ak nie su ziadne arma parametre
+                if (this.armaParam.get("AR").length == 0 && this.armaParam.get("MA").length == 0){
+                    h_t = this.garchParam.get("OMEGA") +
+                            this.garchParam.get("ALPHA") * Math.pow(this.values[i - 1] - this.armaParam.get("MEAN")[0], 2) +
+                            this.garchParam.get("BETA") * h[i - 1];
+                } else {
+                    h_t = this.garchParam.get("OMEGA") +
+                            this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1] - this.armaParam.get("MEAN")[0], 2) +
+                            this.garchParam.get("BETA") * h[i - 1];
+                }
+
                 listSigma.add(Math.sqrt(h_t));
 
                 if (i < residuals.length) {
@@ -222,6 +230,7 @@ public class ArmaGarchModel implements PredictionModelInterface {
         if (diff != null) {
             double[] unDiffFitted = new double[fitted.length + 1];
             unDiffFitted[0] = this.values[0];
+//            this.armaParam.get("RESIDUALS"); //TODO doplnit na zaciatok rezidui 0
             for (int i = 1; i <= fitted.length; i++) {
                 unDiffFitted[i] = fitted[i - 1] + this.values[i - 1];
             }
@@ -237,9 +246,9 @@ public class ArmaGarchModel implements PredictionModelInterface {
     }
 
     public String getFittedValues() {
-        String arr = "";
+        StringBuilder arr = new StringBuilder();
 
-        for (int i = 0; i < this.fittedValues.length; i++) arr = arr + NumHelper.roundAvoid(this.fittedValues[i], 6) + ",";
+        for (double fittedValue : this.fittedValues) arr.append(NumHelper.roundAvoid(fittedValue, 6)).append(",");
         return arr.substring(0, arr.length() - 1);
     }
 
@@ -254,9 +263,9 @@ public class ArmaGarchModel implements PredictionModelInterface {
 
     public String getResiduals() {
         double[] resi = this.armaParam.get("RESIDUALS");
-        String arr = "";
+        StringBuilder arr = new StringBuilder();
 
-        for (int i = 0; i < resi.length; i++) arr = arr + NumHelper.roundAvoid(resi[i], 4) + ",";
+        for (double v : resi) arr.append(NumHelper.roundAvoid(v, 4)).append(",");
 
         return arr.substring(0, arr.length() - 1);
     }

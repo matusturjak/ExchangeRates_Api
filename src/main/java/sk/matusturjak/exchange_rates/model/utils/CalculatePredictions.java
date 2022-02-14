@@ -70,12 +70,12 @@ public class CalculatePredictions {
                             double[] ses = singleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[3]), 0.4);
 
-                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP, singleExponentialSmoothing.getResiduals(), null, singleExponentialSmoothing.getFitted());
+                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.EXP_SMOOTHING, singleExponentialSmoothing.getResiduals(), null, singleExponentialSmoothing.getFitted());
                         } else {
                             double[] des = doubleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[3]), 0.4);
 
-                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP, doubleExponentialSmoothing.getResiduals(), null, doubleExponentialSmoothing.getFitted());
+                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.EXP_SMOOTHING, doubleExponentialSmoothing.getResiduals(), null, doubleExponentialSmoothing.getFitted());
                         }
                     } else {
                         ExponentialSmoothing singleExponentialSmoothing = new SingleExponentialSmoothing(rates.size(), ahead[k]);
@@ -85,12 +85,12 @@ public class CalculatePredictions {
                             double[] ses = singleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                                 .collect(Collectors.toList()).toArray(new Double[5]), 0.3);
 
-                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.SINGLE_EXP, singleExponentialSmoothing.getResiduals(), null, singleExponentialSmoothing.getFitted());
+                            this.savePredictions(rates.get(rates.size() - 1), ses, i, j, StaticVariables.EXP_SMOOTHING, singleExponentialSmoothing.getResiduals(), null, singleExponentialSmoothing.getFitted());
                         } else {
                             double[] des = doubleExponentialSmoothing.predict(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue())
                                     .collect(Collectors.toList()).toArray(new Double[5]), 0.3);
 
-                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.DOUBLE_EXP, doubleExponentialSmoothing.getResiduals(), null, doubleExponentialSmoothing.getFitted());
+                            this.savePredictions(rates.get(rates.size() - 1), des, i, j, StaticVariables.EXP_SMOOTHING, doubleExponentialSmoothing.getResiduals(), null, doubleExponentialSmoothing.getFitted());
                         }
                     }
                 }

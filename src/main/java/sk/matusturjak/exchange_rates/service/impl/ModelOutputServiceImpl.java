@@ -5,6 +5,7 @@ import sk.matusturjak.exchange_rates.model.ModelOutput;
 import sk.matusturjak.exchange_rates.repository.ModelOutputRepository;
 import sk.matusturjak.exchange_rates.service.ModelOutputService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,42 @@ public class ModelOutputServiceImpl implements ModelOutputService {
 
         return arr.isEmpty() ? new LinkedList<>()
                 : arr.subList(arr.size() - numOfFitted, arr.size() - 1).stream().map(Double::parseDouble).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Double> getResiduals(String from, String to, String method, Integer fromI, Integer toI) {
+        if (fromI == null) {
+            fromI = 0;
+        }
+        List<Double> residuals = this.getResiduals(from, to, method);
+        if (toI == null) {
+            toI = residuals.size();
+        }
+        return fromI > toI ? new LinkedList<>() : residuals.subList(fromI, toI);
+    }
+
+    @Override
+    public List<Double> getSigma(String from, String to, Integer fromI, Integer toI) {
+        if (fromI == null) {
+            fromI = 0;
+        }
+        List<Double> sigmas = this.getSigma(from, to);
+        if (toI == null) {
+            toI = sigmas.size();
+        }
+        return fromI > toI ? new LinkedList<>() : sigmas.subList(fromI, toI);
+    }
+
+    @Override
+    public List<Double> getFitted(String from, String to, String method, Integer fromI, Integer toI) {
+        if (fromI == null) {
+            fromI = 0;
+        }
+        List<Double> fitted = this.getFitted(from, to, method);
+        if (toI == null) {
+            toI = fitted.size();
+        }
+        return fromI > toI ? new LinkedList<>() : fitted.subList(fromI, toI);
     }
 
     @Override
