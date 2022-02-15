@@ -119,7 +119,7 @@ public class DownloadExchangeRates {
         }
     }
 
-    @Scheduled(cron = "0 0 17 * *", zone = "Europe/Paris")
+    @Scheduled(cron = "0 0 23 * * *", zone = "Europe/Paris")
     public void downloadAndSaveLatestRatesFromECB() throws Exception {
         List<LatestRate> latestRates = new ArrayList<>();
 
@@ -169,7 +169,7 @@ public class DownloadExchangeRates {
         latestRates.forEach(latestRate -> {
             LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry());
             if (r != null) {
-                double diff = NumHelper.roundAvoid(r.getRate().getValue() - latestRate.getRate().getValue(), 4);
+                double diff = NumHelper.roundAvoid(latestRate.getRate().getValue() - r.getRate().getValue(), 4);
                 this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), diff);
             } else {
                 this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), 0));

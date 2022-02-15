@@ -91,10 +91,13 @@ public class ArmaGarchModel implements PredictionModelInterface {
             mean = 0;
         }
 
+        double[] residuals = ((DoubleArrayVector) result.getElementAsSEXP(7)).toDoubleArray();
+        for (int i = 0; i < residuals.length; i++)  residuals[i] = NumHelper.roundAvoid(residuals[i], 6);
+
         map.put("AR", ar.toDoubleArray());
         map.put("MA", ma.toDoubleArray());
         map.put("MEAN", new double[]{mean});
-        map.put("RESIDUALS", ((DoubleArrayVector) result.getElementAsSEXP(7)).toDoubleArray());
+        map.put("RESIDUALS", residuals);
         map.put("SRESIDUALS", new double[]{});
 
         if (!this.isStacionary) {
@@ -128,7 +131,7 @@ public class ArmaGarchModel implements PredictionModelInterface {
         for (Double value : values) {
             script += value + ",";
         }
-        return script.substring(0, script.length() - 2) + ")";
+        return script.substring(0, script.length() - 1) + ")";
     }
 
     public double[] getDifferencedData(double[] values) {
@@ -153,16 +156,9 @@ public class ArmaGarchModel implements PredictionModelInterface {
             h[0]=this.garchParam.get("OMEGA") / (1 - this.garchParam.get("BETA") - this.garchParam.get("ALPHA")); //TODO variance
             for (int i = 1; i <= residuals.length; i++) {
                 double h_t = 0.0d;
-                //ak nie su ziadne arma parametre
-                if (this.armaParam.get("AR").length == 0 && this.armaParam.get("MA").length == 0){
-                    h_t = this.garchParam.get("OMEGA") +
-                            this.garchParam.get("ALPHA") * Math.pow(this.values[i - 1] - this.armaParam.get("MEAN")[0], 2) +
-                            this.garchParam.get("BETA") * h[i - 1];
-                } else {
-                    h_t = this.garchParam.get("OMEGA") +
-                            this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1] - this.armaParam.get("MEAN")[0], 2) +
-                            this.garchParam.get("BETA") * h[i - 1];
-                }
+                h_t = this.garchParam.get("OMEGA") +
+                        this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1] - this.armaParam.get("MEAN")[0], 2) +
+                        this.garchParam.get("BETA") * h[i - 1];
 
                 listSigma.add(Math.sqrt(h_t));
 

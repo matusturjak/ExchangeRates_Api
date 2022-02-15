@@ -55,14 +55,14 @@ public class PredictionRatesView extends VerticalLayout {
     private FittedRatesChart chart;
     private ResidualsChart resChart;
 
-    private DatePicker dateFromFit;
-    private DatePicker dateToFit;
+//    private DatePicker dateFromFit;
+//    private DatePicker dateToFit;
 
     private DatePicker dateFromRes;
     private DatePicker dateToRes;
 
     private Map<String, Integer> dateMapRes;
-    private Map<String, Integer> dateMapFit;
+//    private Map<String, Integer> dateMapFit;
 
     public PredictionRatesView(PredictionService predictionService, ExchangeRateService exchangeRateService, ModelOutputService modelOutputService) throws Exception {
         this.predictionService = predictionService;
@@ -108,8 +108,8 @@ public class PredictionRatesView extends VerticalLayout {
             setContent(this.tabs.getSelectedTab());
         });
 
-        this.dateFromFit = new DatePicker("Start_date");
-        this.dateToFit = new DatePicker("End_date");
+//        this.dateFromFit = new DatePicker("Start_date");
+//        this.dateToFit = new DatePicker("End_date");
 
         this.initFittedChart();
 
@@ -153,7 +153,7 @@ public class PredictionRatesView extends VerticalLayout {
 
         HorizontalLayout chartsLayout = new HorizontalLayout(this.chart, this.resChart);
         chartsLayout.setWidth("100%");
-        add(new HorizontalLayout(this.dateFromFit, this.dateToFit));
+//        add(new HorizontalLayout(this.dateFromFit, this.dateToFit));
         add(this.chart);
         add(new HorizontalLayout(this.dateFromRes, this.dateToRes));
         add(this.resChart);
@@ -172,8 +172,8 @@ public class PredictionRatesView extends VerticalLayout {
     }
 
     private void datePickersListenerFit() {
-        this.dateFromFit.addValueChangeListener(d -> updateFittedChart());
-        this.dateToFit.addValueChangeListener(d -> updateFittedChart());
+//        this.dateFromFit.addValueChangeListener(d -> updateFittedChart());
+//        this.dateToFit.addValueChangeListener(d -> updateFittedChart());
     }
 
     private void updateResChart() {
@@ -212,35 +212,35 @@ public class PredictionRatesView extends VerticalLayout {
     }
 
     private void updateFittedChart() {
-        Integer fDate = this.dateMapFit.get(this.dateFromFit.getValue().toString());
-        Integer tDate = this.dateMapFit.get(this.dateToFit.getValue().toString());
-
-        if (fDate == null) {
-            fDate = 0;
-        }
-        List<String> times = this.dateMapFit.keySet().stream().sorted().collect(Collectors.toList());
-        if (tDate == null) {
-            tDate = times.size();
-        }
-        times = times.subList(fDate, tDate);
-
-        this.chart.updateChart(
-                this.exchangeRateService.getRates(
-                        this.firstCurr.getValue(),
-                        this.secondCurr.getValue(),
-                        this.dateFromFit.getValue().toString(),
-                        this.dateToFit.getValue().toString()
-                ).stream().map(exchangeRate -> exchangeRate.getRate().getValue()).collect(Collectors.toList()),
-                this.modelOutputService.getFitted(
-                        this.firstCurr.getValue(),
-                        this.secondCurr.getValue(),
-                        this.tabs.getSelectedTab().equals(this.oneDay) ? "arma_garch1" :
-                                this.tabs.getSelectedTab().equals(this.threeDays) ? "exp3" : "exp5",
-                        fDate,
-                        tDate
-                ),
-                times
-        );
+//        Integer fDate = this.dateMapFit.get(this.dateFromFit.getValue().toString());
+//        Integer tDate = this.dateMapFit.get(this.dateToFit.getValue().toString());
+//
+//        if (fDate == null) {
+//            fDate = 0;
+//        }
+//        List<String> times = this.dateMapFit.keySet().stream().sorted().collect(Collectors.toList());
+//        if (tDate == null) {
+//            tDate = times.size();
+//        }
+//        times = times.subList(fDate, tDate);
+//
+//        this.chart.updateChart(
+//                this.exchangeRateService.getRates(
+//                        this.firstCurr.getValue(),
+//                        this.secondCurr.getValue(),
+//                        this.dateFromFit.getValue().toString(),
+//                        this.dateToFit.getValue().toString()
+//                ).stream().map(exchangeRate -> exchangeRate.getRate().getValue()).collect(Collectors.toList()),
+//                this.modelOutputService.getFitted(
+//                        this.firstCurr.getValue(),
+//                        this.secondCurr.getValue(),
+//                        this.tabs.getSelectedTab().equals(this.oneDay) ? "arma_garch1" :
+//                                this.tabs.getSelectedTab().equals(this.threeDays) ? "exp3" : "exp5",
+//                        fDate,
+//                        tDate
+//                ),
+//                times
+//        );
     }
 
     private void initFittedChart() throws Exception {
@@ -250,14 +250,14 @@ public class PredictionRatesView extends VerticalLayout {
         times.addAll(this.predictionService.getPredictions(this.firstCurr.getValue(), this.secondCurr.getValue(), 1)
                 .stream().map(Prediction::getDate).collect(Collectors.toList()));
 
-        List<String> allTimes = this.exchangeRateService.getAllRates(this.firstCurr.getValue(), this.secondCurr.getValue())
-                .stream().map(ExchangeRate::getDate).collect(Collectors.toList());
+//        List<String> allTimes = this.exchangeRateService.getAllRates(this.firstCurr.getValue(), this.secondCurr.getValue())
+//                .stream().map(ExchangeRate::getDate).collect(Collectors.toList());
 
-        this.dateMapFit = new HashMap<>();
-        for (int i = 0; i < allTimes.size(); i++) this.dateMapFit.put(allTimes.get(i), i);
-
-        this.dateFromFit.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(0).getDate())));
-        this.dateToFit.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(rates.size() - 1).getDate())));
+//        this.dateMapFit = new HashMap<>();
+//        for (int i = 0; i < allTimes.size(); i++) this.dateMapFit.put(allTimes.get(i), i);
+//
+//        this.dateFromFit.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(0).getDate())));
+//        this.dateToFit.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(rates.size() - 1).getDate())));
 
         this.chart = new FittedRatesChart(
                 rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue()).collect(Collectors.toList()),
