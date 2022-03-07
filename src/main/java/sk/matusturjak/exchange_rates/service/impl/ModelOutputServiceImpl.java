@@ -29,8 +29,8 @@ public class ModelOutputServiceImpl implements ModelOutputService {
     }
 
     @Override
-    public List<Double> getSigma(String from, String to) {
-        ModelOutput sigma = this.modelOutputRepository.getSigma(from, to);
+    public List<Double> getSigma(String from, String to, String method) {
+        ModelOutput sigma = this.modelOutputRepository.getSigma(from, to, method);
         List<String> arr = sigma != null ? Arrays.asList(sigma.getSigma().split(",")) : new LinkedList<>();
 
         return arr.stream().map(Double::parseDouble).collect(Collectors.toList());
@@ -50,7 +50,7 @@ public class ModelOutputServiceImpl implements ModelOutputService {
         List<String> arr = modelOutput != null ? Arrays.asList(modelOutput.getFitted().split(",")) : new LinkedList<>();
 
         return arr.isEmpty() ? new LinkedList<>()
-                : arr.subList(arr.size() - numOfFitted, arr.size() - 1).stream().map(Double::parseDouble).collect(Collectors.toList());
+                : arr.subList(arr.size() - numOfFitted, arr.size()).stream().map(Double::parseDouble).collect(Collectors.toList());
     }
 
     @Override
@@ -61,18 +61,22 @@ public class ModelOutputServiceImpl implements ModelOutputService {
         List<Double> residuals = this.getResiduals(from, to, method);
         if (toI == null) {
             toI = residuals.size();
+        } else {
+            toI++; // we want inclusive not exclusive
         }
         return fromI > toI ? new LinkedList<>() : residuals.subList(fromI, toI);
     }
 
     @Override
-    public List<Double> getSigma(String from, String to, Integer fromI, Integer toI) {
+    public List<Double> getSigma(String from, String to, Integer fromI, Integer toI, String method) {
         if (fromI == null) {
             fromI = 0;
         }
-        List<Double> sigmas = this.getSigma(from, to);
+        List<Double> sigmas = this.getSigma(from, to, method);
         if (toI == null) {
             toI = sigmas.size();
+        } else {
+            toI++; // we want inclusive not exclusive
         }
         return fromI > toI ? new LinkedList<>() : sigmas.subList(fromI, toI);
     }
@@ -85,6 +89,8 @@ public class ModelOutputServiceImpl implements ModelOutputService {
         List<Double> fitted = this.getFitted(from, to, method);
         if (toI == null) {
             toI = fitted.size();
+        } else {
+            toI++;
         }
         return fromI > toI ? new LinkedList<>() : fitted.subList(fromI, toI);
     }

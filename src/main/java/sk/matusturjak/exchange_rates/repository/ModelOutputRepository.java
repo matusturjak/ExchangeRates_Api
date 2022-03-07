@@ -17,8 +17,8 @@ public interface ModelOutputRepository extends JpaRepository<ModelOutput, Long> 
             "p.method LIKE CASE WHEN ?3 < 3 THEN \"%arma_garch%\" WHEN ?3 = 3 THEN \"%exp3\" WHEN ?3 = 5 THEN \"%exp5\" ELSE \"\" END", nativeQuery = true)
     ModelOutput getModelOutput(String from, String to, Integer predictions);
 
-    @Query(value = "SELECT * FROM model_output mo WHERE first_country like ?1 and second_country like ?2 and method like 'arma_garch1'", nativeQuery = true)
-    ModelOutput getSigma(String from, String to);
+    @Query(value = "SELECT * FROM model_output mo WHERE first_country like ?1 and second_country like ?2 and method like ?3", nativeQuery = true)
+    ModelOutput getSigma(String from, String to, String method);
 
     @Modifying
     @Transactional

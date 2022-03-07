@@ -4,10 +4,14 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
+import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.model.utils.StaticVariables;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
 import sk.matusturjak.exchange_rates.vaadin.views.MainLayout;
@@ -20,6 +24,7 @@ public class ActualRatesView extends VerticalLayout {
     private ComboBox<String> baseCurr;
     private Button enterButton;
     private Grid<CurrencyTableRow> table;
+    private NumberField baseValueField;
 
     private LatestRateService latestRateService;
 
@@ -29,6 +34,11 @@ public class ActualRatesView extends VerticalLayout {
         this.baseCurr = new ComboBox<>();
         this.baseCurr.setItems(StaticVariables.currencies);
         this.baseCurr.setValue("EUR");
+        this.baseCurr.setLabel("Base");
+
+        this.baseValueField = new NumberField();
+        this.baseValueField.setLabel("Value");
+        this.baseValueField.setValue(1.0);
 
         this.enterButton = new Button("Show", new Icon(VaadinIcon.ENTER));
 
@@ -42,7 +52,7 @@ public class ActualRatesView extends VerticalLayout {
 
         add(new H1("Latest rates"));
         add(this.baseCurr);
-        add(this.enterButton);
+        add(new HorizontalLayout(this.baseValueField,new VerticalLayout(new Label(""),this.enterButton)));
         add(this.table);
     }
 
@@ -106,7 +116,7 @@ public class ActualRatesView extends VerticalLayout {
                             new CurrencyTableRow(
                                     this.baseCurr.getValue(),
                                     latestRate.getRate().getSecondCountry(),
-                                    latestRate.getRate().getValue(),
+                                    NumHelper.roundAvoid(latestRate.getRate().getValue() * this.baseValueField.getValue(), 4),
                                     latestRate.getDifference()
                             )
                     );

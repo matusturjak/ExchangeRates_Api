@@ -6,6 +6,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.Prediction;
+import sk.matusturjak.exchange_rates.model.utils.MyDate;
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.model.utils.StaticVariables;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
@@ -25,7 +27,9 @@ import sk.matusturjak.exchange_rates.vaadin.charts.FittedRatesChart;
 import sk.matusturjak.exchange_rates.vaadin.charts.ResidualsChart;
 import sk.matusturjak.exchange_rates.vaadin.views.MainLayout;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +53,9 @@ public class PredictionRatesView extends VerticalLayout {
     private Button button;
 
     private Grid<PredictionTableRow> predictionTable;
+    private Grid<PredictionTableRow> predictSigmaTable;
+
+    private ComboBox<String> comboBoxModel;
     private Span nameOfModel;
     private Checkbox residualsCheckbox;
 
@@ -63,6 +70,8 @@ public class PredictionRatesView extends VerticalLayout {
 
     private Map<String, Integer> dateMapRes;
 //    private Map<String, Integer> dateMapFit;
+
+    private H2 labelPredictionsVol;
 
     public PredictionRatesView(PredictionService predictionService, ExchangeRateService exchangeRateService, ModelOutputService modelOutputService) throws Exception {
         this.predictionService = predictionService;
@@ -95,6 +104,14 @@ public class PredictionRatesView extends VerticalLayout {
         this.predictionTable = new Grid<>(PredictionTableRow.class, false);
         this.predictionTable.setAllRowsVisible(true);
 
+        this.labelPredictionsVol = new H2("Predictions of volatility");
+
+        this.predictSigmaTable = new Grid<>(PredictionTableRow.class, false);
+        this.predictSigmaTable.setAllRowsVisible(true);
+
+        VerticalLayout predictSigmaTableLayout = new VerticalLayout(this.predictSigmaTable);
+        predictSigmaTableLayout.setWidth("35em");
+
         this.tabLayout = new VerticalLayout();
         this.tabLayout.add(this.predictionTable);
         this.tabLayout.setWidth("35em");
@@ -120,15 +137,32 @@ public class PredictionRatesView extends VerticalLayout {
 
         currLayout.add(this.firstCurr, this.secondCurr);
 
+        this.comboBoxModel = new ComboBox<>("Model");
+        this.comboBoxModel.setItems("ARMA - GARCH", "ARMA - IGARCH");
+        this.comboBoxModel.setValue("ARMA - GARCH");
+        this.comboBoxModel.addValueChangeListener(comboBoxStringComponentValueChangeEvent -> {
+            this.updateTable(1);
+            this.updateResChart();
+        });
+
         this.nameOfModel = new Span("ARMA - GARCH");
 
         this.residualsCheckbox = new Checkbox("Show residuals");
         this.residualsCheckbox.addValueChangeListener(checkboxClickEvent -> {
             if (this.residualsCheckbox.getValue()) {
+                if (!this.tabs.getSelectedTab().equals(this.oneDay)) {
+                    this.labelPredictionsVol.setVisible(false);
+                    this.predictSigmaTable.setVisible(false);
+                } else {
+                    this.labelPredictionsVol.setVisible(true);
+                    this.predictSigmaTable.setVisible(true);
+                }
                 this.dateFromRes.setVisible(true);
                 this.dateToRes.setVisible(true);
                 this.resChart.setVisible(true);
             } else {
+                this.labelPredictionsVol.setVisible(false);
+                this.predictSigmaTable.setVisible(false);
                 this.dateFromRes.setVisible(false);
                 this.dateToRes.setVisible(false);
                 this.resChart.setVisible(false);
@@ -138,7 +172,7 @@ public class PredictionRatesView extends VerticalLayout {
         this.residualsCheckbox.setValue(true);
 
         this.nameOfModel.getStyle().set("font-weight", "bold");
-        HorizontalLayout headerLayout = new HorizontalLayout(this.nameOfModel, this.residualsCheckbox);
+        HorizontalLayout headerLayout = new HorizontalLayout(this.comboBoxModel, this.residualsCheckbox);
         headerLayout.setAlignItems(Alignment.START);
         headerLayout.setFlexGrow(1, this.nameOfModel);
 
@@ -155,6 +189,8 @@ public class PredictionRatesView extends VerticalLayout {
         chartsLayout.setWidth("100%");
 //        add(new HorizontalLayout(this.dateFromFit, this.dateToFit));
         add(this.chart);
+        add(this.labelPredictionsVol);
+        add(predictSigmaTableLayout);
         add(new HorizontalLayout(this.dateFromRes, this.dateToRes));
         add(this.resChart);
 
@@ -183,25 +219,42 @@ public class PredictionRatesView extends VerticalLayout {
         if (fDate == null) {
             fDate = 0;
         }
+
         List<String> times = this.dateMapRes.keySet().stream().sorted().collect(Collectors.toList());
-        if (tDate == null) {
-            tDate = times.size() - 1; //
+
+        if (tDate == null && this.dateToRes.getValue().toString().compareTo(times.get(times.size() - 1)) < 0) {
+            LocalDate curr = this.dateToRes.getValue();
+            while(!this.dateMapRes.containsKey(curr.toString())) {
+                curr = curr.plusDays(1);
+            }
+            tDate = this.dateMapRes.get(curr.toString());
         }
-        times = times.subList(fDate, tDate);
+
+        times = times.subList(fDate, tDate == null ? times.size() : tDate + 1);
 
         if (this.tabs.getSelectedTab().equals(this.oneDay)) {
+            if (this.dateToRes.getValue().toString().compareTo(times.get(times.size() - 1)) >=0) {
+                times.add(new MyDate().addDays(times.get(times.size()-1),1));
+            }
+            String method = this.comboBoxModel.getValue().contains("igarch") ? "arma_igarch1" : "arma_garch1";
             this.resChart.updateChart(
                     this.modelOutputService.getResiduals(this.firstCurr.getValue(), this.secondCurr.getValue(),"arma_garch1", fDate, tDate),
-                    this.modelOutputService.getSigma(this.firstCurr.getValue(), this.secondCurr.getValue(), fDate, tDate),
+                    this.modelOutputService.getSigma(this.firstCurr.getValue(), this.secondCurr.getValue(), fDate, tDate, "arma_garch1"),
                     times
             );
         } else if (this.tabs.getSelectedTab().equals(this.threeDays)) {
+            if (this.dateToRes.getValue().toString().compareTo(times.get(times.size() - 1)) > 0) {
+                fDate++;
+            }
             this.resChart.updateChart(
                     this.modelOutputService.getResiduals(this.firstCurr.getValue(), this.secondCurr.getValue(),"exp3", fDate, tDate),
                     null,
                     times
             );
         } else {
+            if (this.dateToRes.getValue().toString().compareTo(times.get(times.size() - 1)) > 0) {
+                fDate++;
+            }
             this.resChart.updateChart(
                     this.modelOutputService.getResiduals(this.firstCurr.getValue(), this.secondCurr.getValue(),"exp5", fDate, tDate),
                     null,
@@ -274,7 +327,7 @@ public class PredictionRatesView extends VerticalLayout {
                 .stream().map(ExchangeRate::getDate).collect(Collectors.toList());
 
         this.dateMapRes = new HashMap<>();
-        for (int i = 0; i < allTimes.size(); i++) this.dateMapRes.put(allTimes.get(i), i);
+        for (int i = 1; i < allTimes.size(); i++) this.dateMapRes.put(allTimes.get(i), i - 1);
 
         this.dateFromRes.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(0).getDate())));
         this.dateToRes.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(rates.size() - 1).getDate())));
@@ -283,7 +336,8 @@ public class PredictionRatesView extends VerticalLayout {
                 this.firstCurr.getValue(),
                 this.secondCurr.getValue(),
                 this.dateMapRes.get(this.dateFromRes.getValue().toString()),
-                this.dateMapRes.get(this.dateToRes.getValue().toString())
+                this.dateMapRes.get(this.dateToRes.getValue().toString()) + 1,
+                "arma_garch1"
         );
         List<Double> residuals = this.modelOutputService.getResiduals(
                 this.firstCurr.getValue(),
@@ -292,6 +346,8 @@ public class PredictionRatesView extends VerticalLayout {
                 this.dateMapRes.get(this.dateFromRes.getValue().toString()),
                 this.dateMapRes.get(this.dateToRes.getValue().toString())
         );
+
+        times.add(new MyDate().addDays(this.dateToRes.getValue().toString(), 1));
         this.resChart = new ResidualsChart(
                 residuals,
                 sigmas,
@@ -325,43 +381,57 @@ public class PredictionRatesView extends VerticalLayout {
                 .forEach(prediction -> list.add(new PredictionTableRow(prediction.getDate(), prediction.getRate().getValue())));
 
         List<ExchangeRate> rates = this.getRates();
+        try {
+            this.dateFromRes.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(0).getDate())));
+            this.dateToRes.setValue(NumHelper.dateToLocalDate(new SimpleDateFormat("yyyy-MM-dd").parse(rates.get(rates.size() - 1).getDate())));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         this.predictionTable.setItems(list);
         this.predictionTable.setColumns("date", "value");
-
 
         List<Double> fitted = this.modelOutputService.getLatestFitted(
                 this.firstCurr.getValue(),
                 this.secondCurr.getValue(),
                 num,
-                rates.size() + num + 1
+                rates.size() + num
         );
         List<String> times = rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList());
 
         times.addAll(list.stream().map(PredictionTableRow::getDate).collect(Collectors.toList()));
         this.chart.updateChart(rates.stream().map(exchangeRate -> exchangeRate.getRate().getValue()).collect(Collectors.toList()), fitted, times);
+
         if (num == 1) {
             List<Double> residuals =
                     this.modelOutputService.getResiduals(
                             this.firstCurr.getValue(), this.secondCurr.getValue(), "arma_garch1",
                             this.dateMapRes.get(this.dateFromRes.getValue().toString()),
-                            this.dateMapRes.get(this.dateToRes.getValue().toString())
+                            null
                     );
             List<Double> sigmas =
                     this.modelOutputService.getSigma(
                             this.firstCurr.getValue(), this.secondCurr.getValue(),
                             this.dateMapRes.get(this.dateFromRes.getValue().toString()),
-                            this.dateMapRes.get(this.dateToRes.getValue().toString())
+                            null,
+                            "arma_garch1"
                     );
+            this.labelPredictionsVol.setVisible(true);
+            this.predictSigmaTable.setVisible(true);
+            this.predictSigmaTable.setItems(new PredictionTableRow(times.get(times.size() - 1), sigmas.get(sigmas.size() - 1)));
+            this.predictSigmaTable.setColumns("date", "value");
 
             this.resChart.updateChart(residuals, sigmas, times);
         } else {
+            this.labelPredictionsVol.setVisible(false);
+            this.predictSigmaTable.setVisible(false);
+
             List<Double> residuals =
                     this.modelOutputService.getResiduals(
                             this.firstCurr.getValue(), this.secondCurr.getValue(), "exp" + num,
-                            this.dateMapRes.get(this.dateFromRes.getValue().toString()),
-                            this.dateMapRes.get(this.dateToRes.getValue().toString())
+                            this.dateMapRes.get(this.dateFromRes.getValue().toString()) + 1,
+                            null
                     );
-            this.resChart.updateChart(residuals, null, times);
+            this.resChart.updateChart(residuals, null, times.subList(0, times.size() - num + 1));
         }
     }
 

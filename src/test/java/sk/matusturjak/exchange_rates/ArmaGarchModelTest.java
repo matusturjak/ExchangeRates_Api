@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
+import sk.matusturjak.exchange_rates.predictions.armagarch.ArimaGarchModel;
+import sk.matusturjak.exchange_rates.predictions.armagarch.ArimaIGarchModel;
+import sk.matusturjak.exchange_rates.predictions.armagarch.ArimaModel;
 import sk.matusturjak.exchange_rates.predictions.armagarch.ArmaGarchModel;
+import sk.matusturjak.exchange_rates.predictions.exp_smoothing.DoubleExponentialSmoothing;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 
 import javax.script.ScriptException;
@@ -72,7 +76,7 @@ public class ArmaGarchModelTest {
 
     @Test
     public void createArmaGarchModelTest() throws Exception {
-        List<ExchangeRate> list = rateService.getAllRates("EUR", "CAD");
+        List<ExchangeRate> list = rateService.getAllRates("EUR", "CZK");
 
         double sum = list.stream().mapToDouble(value -> value.getRate().getValue()).sum();
         double[] times = new double[list.size()];
@@ -83,6 +87,16 @@ public class ArmaGarchModelTest {
         double[] values = new double[times.length];
         for (int i = 0; i < values.length; i++) {
             values[i] = list.get(i).getRate().getValue();
+        }
+
+//        DoubleExponentialSmoothing exponentialSmoothing = new DoubleExponentialSmoothing(values.length, 3);
+//        exponentialSmoothing.fit((Double[]) values, 0.3);
+
+        ArimaModel arimaModel = new ArimaModel(values);
+        arimaModel.calculateArmaModel();
+        ArimaIGarchModel arimaGarchModel = null;
+        if (arimaModel.isHeteroskedasticityInResiduals()) {
+            arimaGarchModel = new ArimaIGarchModel(arimaModel);
         }
 
         ArmaGarchModel model = new ArmaGarchModel();

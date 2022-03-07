@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.ModelOutput;
 import sk.matusturjak.exchange_rates.model.Prediction;
+import sk.matusturjak.exchange_rates.predictions.armagarch.ArimaGarchModel;
+import sk.matusturjak.exchange_rates.predictions.armagarch.ArimaIGarchModel;
+import sk.matusturjak.exchange_rates.predictions.armagarch.ArimaModel;
 import sk.matusturjak.exchange_rates.predictions.armagarch.ArmaGarchModel;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.DoubleExponentialSmoothing;
 import sk.matusturjak.exchange_rates.predictions.exp_smoothing.ExponentialSmoothing;
@@ -43,7 +46,8 @@ public class CalculatePredictions {
     public void calculateAndSave() throws Exception {
         this.predictionService.removePredictions();
 
-        ArmaGarchModel armaGarchModel = new ArmaGarchModel();
+//        ArmaGarchModel armaGarchModel = new ArmaGarchModel();
+        ArimaModel arimaModel = new ArimaModel();
         for (String i : currency) {
             for (String j : currency) {
                 List<ExchangeRate> rates = this.exchangeRateService.getLastRates(i, j, StaticVariables.MODEL_DAYS);
@@ -56,12 +60,40 @@ public class CalculatePredictions {
                     if (ahead[k] == 1) {
                         double[] ratesArray = new double[rates.size()];
                         for (int l = 0; l < ratesArray.length; l++) ratesArray[l] = rates.get(l).getRate().getValue();
-                        armaGarchModel = armaGarchModel.calculateArmaGarchModel(ratesArray);
+                        arimaModel.setValues(ratesArray);
+                        arimaModel.calculateArmaModel();
 
-                        double armaPrediction = NumHelper.roundAvoid(armaGarchModel.predict(), 4);
-                        this.savePredictions(
-                                rates.get(rates.size() - 1), new double[]{armaPrediction}, i, j, StaticVariables.ARMA_GARCH, armaGarchModel.getResiduals(), armaGarchModel.getSigma(), armaGarchModel.getFittedValues()
-                        );
+                        ArimaGarchModel arimaGarchModel = null;
+                        ArimaIGarchModel arimaIGarchModel = null;
+                        if (arimaModel.isHeteroskedasticityInResiduals()) {
+                            arimaGarchModel = new ArimaGarchModel(arimaModel);
+                            arimaIGarchModel = new ArimaIGarchModel(arimaModel);
+
+                            double arimaGarchPrediction = NumHelper.roundAvoid(arimaGarchModel.predict(), 4);
+                            double arimaIGarchPrediction = NumHelper.roundAvoid(arimaIGarchModel.predict(), 4);
+
+                            this.savePredictions(
+                                    rates.get(rates.size() - 1), new double[]{arimaGarchPrediction}, i, j, StaticVariables.ARMA_GARCH, arimaGarchModel.getResiduals(), arimaGarchModel.getSigmaString(), arimaGarchModel.getFittedValues()
+                            );
+
+                            this.savePredictions(
+                                    rates.get(rates.size() - 1), new double[]{arimaIGarchPrediction}, i, j, StaticVariables.ARMA_IGARCH, arimaIGarchModel.getResiduals(), arimaIGarchModel.getSigmaString(), arimaIGarchModel.getFittedValues()
+                            );
+                        } else {
+                            arimaModel.calculateArmaModel();
+
+                            double armaPrediction = NumHelper.roundAvoid(arimaModel.predict(), 4);
+                            this.savePredictions(
+                                    rates.get(rates.size() - 1), new double[]{armaPrediction}, i, j, StaticVariables.ARMA_GARCH, arimaModel.getResiduals(), null, arimaModel.getFittedValues()
+                            );
+                        }
+
+//                        armaGarchModel = armaGarchModel.calculateArmaGarchModel(ratesArray);
+//
+//                        double armaPrediction = NumHelper.roundAvoid(armaGarchModel.predict(), 4);
+//                        this.savePredictions(
+//                                rates.get(rates.size() - 1), new double[]{armaPrediction}, i, j, StaticVariables.ARMA_GARCH, armaGarchModel.getResiduals(), armaGarchModel.getSigma(), armaGarchModel.getFittedValues()
+//                        );
                     } else if (ahead[k] == 3) {
                         ExponentialSmoothing singleExponentialSmoothing = new SingleExponentialSmoothing(rates.size(), ahead[k]);
                         ExponentialSmoothing doubleExponentialSmoothing = new DoubleExponentialSmoothing(rates.size(), ahead[k]);

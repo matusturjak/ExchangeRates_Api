@@ -1,53 +1,40 @@
 package sk.matusturjak.exchange_rates.predictions.armagarch;
 
 import org.renjin.script.RenjinScriptEngine;
-import org.renjin.sexp.*;
+import org.renjin.sexp.DoubleArrayVector;
+import org.renjin.sexp.ListVector;
 import org.renjin.sexp.Vector;
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.predictions.PredictionModelInterface;
 
 import javax.script.ScriptException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
-public class ArmaGarchModel implements PredictionModelInterface {
+public class ArimaModel extends PredictionModel {
     private HashMap<String, double[]> armaParam;
-    private HashMap<String, Double> garchParam;
-    private String sigma;
-
     private boolean isStacionary = false;
 
-    private double[] values;
-    private double[] fittedValues;
-
-    private RenjinScriptEngine engine;
-
-    public ArmaGarchModel() throws Exception {
-        this.engine = new RenjinScriptEngine();
+    public ArimaModel() throws ScriptException {
+        super();
         this.engine.eval("library('org.renjin.cran:forecast')");
         this.engine.eval("library('org.renjin.cran:tseries')");
         this.engine.eval("library('org.renjin.cran:FinTS')");
         this.engine.eval("library('org.renjin.cran:TSA')");
         this.engine.eval("library('org.renjin.cran:readxl')");
-        this.sigma = "";
     }
 
-    public ArmaGarchModel(double[] values) throws Exception {
-        this();
-        this.values = values;
+    public ArimaModel(double[] values) throws ScriptException {
+        super(values);
+        this.engine.eval("library('org.renjin.cran:forecast')");
+        this.engine.eval("library('org.renjin.cran:tseries')");
+        this.engine.eval("library('org.renjin.cran:FinTS')");
+        this.engine.eval("library('org.renjin.cran:TSA')");
+        this.engine.eval("library('org.renjin.cran:readxl')");
     }
 
-    public ArmaGarchModel calculateArmaGarchModel(double[] values) throws Exception {
-        this.values = values;
-        this.sigma = "";
-
+    public void calculateArmaModel() throws Exception {
         this.isStacionary = this.isSerieStacionary();
         this.armaParam = this.getArmaParam();
-
-        if (this.isHeteroskedasticityInResiduals()) {
-            this.garchParam = this.getGarchParam();
-        }
-        return this;
     }
 
     public boolean isHeteroskedasticityInResiduals() throws ScriptException {
@@ -106,23 +93,6 @@ public class ArmaGarchModel implements PredictionModelInterface {
         return map;
     }
 
-    private HashMap<String, Double> getGarchParam() throws Exception {
-        HashMap<String, Double> map = new HashMap<>();
-
-        this.engine.eval(new java.io.FileReader("src/main/scripts/mle_garch.R"));
-
-        String script = "mlef<-optim(para, garch_loglik, gr = NULL,method = c(\"Nelder-Mead\"),hessian=FALSE," +
-                this.getVector(this.armaParam.get("RESIDUALS")) + ",0)";
-        Vector result = (Vector) this.engine.eval(script);
-        double[] parameters = ((DoubleArrayVector) result.getElementAsSEXP(0)).toDoubleArray();
-
-        map.put("OMEGA", parameters[0]);
-        map.put("ALPHA", parameters[1]);
-        map.put("BETA", parameters[2]);
-
-        return map;
-    }
-
     public String getVector(double[] values) {
         String script = "c(";
         for (Double value : values) {
@@ -143,34 +113,6 @@ public class ArmaGarchModel implements PredictionModelInterface {
     public double[] fittedValues() {
         double[] residuals = this.armaParam.get("RESIDUALS");
 
-        double[] h = new double[residuals.length];
-        double[] z = new double[residuals.length];
-        double[] e = new double[residuals.length];
-//        Arrays.fill(e, 0);
-
-        List<Double> listSigma = new LinkedList<>();
-        if (garchParam != null) {
-            h[0]=this.garchParam.get("OMEGA") / (1 - this.garchParam.get("BETA") - this.garchParam.get("ALPHA")); //TODO variance
-            listSigma.add(h[0]);
-            for (int i = 1; i <= residuals.length; i++) {
-                double h_t = 0.0d;
-                h_t = this.garchParam.get("OMEGA") +
-                        this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1] - this.armaParam.get("MEAN")[0], 2) +
-                        this.garchParam.get("BETA") * h[i - 1];
-
-                listSigma.add(Math.sqrt(h_t));
-
-                if (i < residuals.length) {
-                    h[i] = h_t;
-                }
-                z[i - 1] = residuals[i - 1] / Math.sqrt(h[i - 1]);
-                e[i - 1] = z[i - 1] * Math.sqrt(h[i - 1]);
-            }
-        }
-
-        this.setSigma(listSigma);
-        this.armaParam.replace("SRESIDUALS", z);
-
         double[] ar = this.armaParam.get("AR");
         double[] ma = this.armaParam.get("MA");
 
@@ -180,7 +122,6 @@ public class ArmaGarchModel implements PredictionModelInterface {
         for (int i = 0; i < fitted.length; i++) {
             double sumAR = 0;
             double sumMA = 0;
-            double error = 0;
 
             if (Math.max(ar.length, ma.length) > i) {
                 fitted[i] = diff == null ? this.values[i] : diff[i];
@@ -215,9 +156,8 @@ public class ArmaGarchModel implements PredictionModelInterface {
                 for (int j = 0; j < ma.length; j++) {
                     sumMA += ma[j] * residuals[i - pom++];
                 }
-                error = e[i];
             }
-            fitted[i] = sumAR + sumMA + error;
+            fitted[i] = sumAR + sumMA;
         }
 
 
@@ -238,28 +178,19 @@ public class ArmaGarchModel implements PredictionModelInterface {
         return this.fittedValues[this.fittedValues.length - 1];
     }
 
-    public String getFittedValues() {
-        StringBuilder arr = new StringBuilder();
-
-        for (double fittedValue : this.fittedValues) arr.append(NumHelper.roundAvoid(fittedValue, 6)).append(",");
-        return arr.substring(0, arr.length() - 1);
-    }
-
-    private void setSigma(List<Double> sigmaList) {
-        List<String> sigmaListString = sigmaList.stream().map(aDouble -> NumHelper.roundAvoid(aDouble,4) + "").collect(Collectors.toList());
-        this.sigma = String.join(",", sigmaListString);
-    }
-
-    public String getSigma() {
-        return this.sigma;
-    }
-
     public String getResiduals() {
         double[] resi = this.armaParam.get("RESIDUALS");
         StringBuilder arr = new StringBuilder();
 
         for (double v : resi) arr.append(NumHelper.roundAvoid(v, 4)).append(",");
 
+        return arr.substring(0, arr.length() - 1);
+    }
+
+    public String getFittedValues() {
+        StringBuilder arr = new StringBuilder();
+
+        for (double fittedValue : this.fittedValues) arr.append(NumHelper.roundAvoid(fittedValue, 6)).append(",");
         return arr.substring(0, arr.length() - 1);
     }
 }

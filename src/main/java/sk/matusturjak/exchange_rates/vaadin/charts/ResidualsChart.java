@@ -21,7 +21,7 @@ public class ResidualsChart extends Div {
         ApexCharts apexCharts = this.buildChart(residuals, positiveSigma, negativeSigma, times);
 
         add(apexCharts);
-        setWidth("100%");
+        setWidth("70%");
         this.chart = apexCharts;
     }
 
