@@ -8,7 +8,7 @@ public interface ModelOutputService {
     List<Double> getResiduals(String from, String to, String method);
     List<Double> getSigma(String from, String to, String method);
     List<Double> getFitted(String from, String to, String method);
-    List<Double> getLatestFitted(String from, String to, int predictions, int numOfFitted);
+    List<Double> getLatestFitted(String from, String to, String method, int numOfFitted);
 
     List<Double> getResiduals(String from, String to, String method, Integer fromI, Integer toI);
     List<Double> getSigma(String from, String to, Integer fromI, Integer toI, String method);

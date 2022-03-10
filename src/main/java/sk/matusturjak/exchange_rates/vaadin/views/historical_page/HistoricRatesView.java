@@ -76,7 +76,6 @@ public class HistoricRatesView extends VerticalLayout {
                 rates.stream().map(exchangeRate -> exchangeRate.getDate()).collect(Collectors.toList()),
                 this.firstCurr.getValue() + "/" + this.secondCurr.getValue() + "    " + rates.get(rates.size() - 1).getRate().getValue()
         );
-        this.chart.setWidthFull();
 
         layoutCurr.add(this.firstCurr, this.secondCurr);
         layoutDate.add(this.dateFrom, this.dateTo);

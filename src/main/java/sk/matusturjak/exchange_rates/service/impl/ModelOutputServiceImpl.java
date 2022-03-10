@@ -5,7 +5,6 @@ import sk.matusturjak.exchange_rates.model.ModelOutput;
 import sk.matusturjak.exchange_rates.repository.ModelOutputRepository;
 import sk.matusturjak.exchange_rates.service.ModelOutputService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,8 +44,8 @@ public class ModelOutputServiceImpl implements ModelOutputService {
     }
 
     @Override
-    public List<Double> getLatestFitted(String from, String to, int predictions, int numOfFitted) {
-        ModelOutput modelOutput = this.modelOutputRepository.getModelOutput(from, to, predictions);
+    public List<Double> getLatestFitted(String from, String to, String method, int numOfFitted) {
+        ModelOutput modelOutput = this.modelOutputRepository.getModelOutput(from, to, method);
         List<String> arr = modelOutput != null ? Arrays.asList(modelOutput.getFitted().split(",")) : new LinkedList<>();
 
         return arr.isEmpty() ? new LinkedList<>()
@@ -108,8 +107,8 @@ public class ModelOutputServiceImpl implements ModelOutputService {
     @Override
     public void updateModelOutput(ModelOutput modelOutput) {
         this.modelOutputRepository.updateModelOutput(
-                modelOutput.getFirstCountry(),
-                modelOutput.getSecondCountry(),
+                modelOutput.getFromCurr(),
+                modelOutput.getToCurr(),
                 modelOutput.getMethod(),
                 modelOutput.getResiduals(),
                 modelOutput.getSigma()

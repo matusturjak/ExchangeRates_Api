@@ -46,7 +46,7 @@ public class FittedRatesChart extends Div {
                 .withStroke(StrokeBuilder.get().withCurve(Curve.straight).build())
                 .withSeries(new Series<>("Real values", arrReal), new Series<>("Fitted values", arrFitted))
                 .withTitle(TitleSubtitleBuilder.get()
-                        .withText("Fitted values")
+                        .withText("Fitted values of ARIMA - (I)GARCH model")
                         .withAlign(Align.left).build())
                 .withSubtitle(TitleSubtitleBuilder.get()
                         .withAlign(Align.left).build())

@@ -72,68 +72,7 @@ public abstract class AbstractGarchModel extends PredictionModel implements Pred
         }
 
         this.setSigma(listSigma);
-        this.armaParam.replace("SRESIDUALS", z);
-
-        double[] ar = this.armaParam.get("AR");
-        double[] ma = this.armaParam.get("MA");
-
-        double[] diff = this.armaParam.get("DIFFERENCED");
-        double[] fitted = new double[diff == null ? this.values.length + 1 : diff.length + 1];
-
-        for (int i = 0; i < fitted.length; i++) {
-            double sumAR = 0;
-            double sumMA = 0;
-            double error = 0;
-
-            if (Math.max(ar.length, ma.length) > i) {
-                fitted[i] = diff == null ? this.values[i] : diff[i];
-                continue;
-            }
-
-            if (i == fitted.length - 1) {
-                int pom = 1;
-                for (int j = 0; j < ar.length; j++) {
-                    if (diff != null) {
-                        sumAR += ar[j] * diff[diff.length - pom++];
-                    } else {
-                        sumAR += ar[j] * this.values[this.values.length - pom++];
-                    }
-                }
-
-                pom = 1;
-                for (int j = 0; j < ma.length; j++) {
-                    sumMA += ma[j] * residuals[residuals.length - pom++];
-                }
-            } else {
-                int pom = 1;
-                for (int j = 0; j < ar.length; j++) {
-                    if (diff != null) {
-                        sumAR += ar[j] * diff[i - pom++];
-                    } else {
-                        sumAR += ar[j] * this.values[i - pom++];
-                    }
-                }
-
-                pom = 1;
-                for (int j = 0; j < ma.length; j++) {
-                    sumMA += ma[j] * residuals[i - pom++];
-                }
-                error = e[i];
-            }
-            fitted[i] = sumAR + sumMA + error;
-        }
-
-
-        if (diff != null) {
-            double[] unDiffFitted = new double[fitted.length + 1];
-            unDiffFitted[0] = this.values[0];
-            for (int i = 1; i <= fitted.length; i++) {
-                unDiffFitted[i] = fitted[i - 1] + this.values[i - 1];
-            }
-            return unDiffFitted;
-        }
-
-        return fitted;
+        return this.armaParam.get("FITTED");
     }
 
     private HashMap<String, Double> getGarchParam() throws Exception {

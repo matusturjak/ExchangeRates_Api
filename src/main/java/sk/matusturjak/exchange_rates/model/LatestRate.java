@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "latest_rates", indexes = {@Index(name = "ind_latest", columnList = "first_country, second_country", unique = false)})
+@Table(name = "latest_rates", indexes = {@Index(name = "ind_latest", columnList = "from_curr, to_curr", unique = false)})
 public class LatestRate {
 
     @Id
@@ -22,12 +22,12 @@ public class LatestRate {
     public LatestRate() {
     }
 
-    public LatestRate(String firstCountry, String secondCountry, double value) {
-        this.rate = new Rate(firstCountry, secondCountry, value);
+    public LatestRate(String fromCurr, String toCurr, double value) {
+        this.rate = new Rate(fromCurr, toCurr, value);
     }
 
-    public LatestRate(String firstCountry, String secondCountry, double value, double difference) {
-        this(firstCountry, secondCountry, value);
+    public LatestRate(String fromCurr, String toCurr, double value, Double difference) {
+        this(fromCurr, toCurr, value);
         this.difference = difference;
     }
 

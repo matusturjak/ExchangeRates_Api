@@ -8,6 +8,7 @@ import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.predictions.PredictionModelInterface;
 
 import javax.script.ScriptException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ArimaModel extends PredictionModel {
@@ -55,15 +56,13 @@ public class ArimaModel extends PredictionModel {
     public HashMap<String, double[]> getArmaParam() throws ScriptException {
         HashMap<String, double[]> map = new HashMap<>();
 
-        String script = "";
-        if (this.isStacionary) {
-            script = "auto.arima(" + this.getVector(this.values) + ")";
-        } else {
-            this.engine.eval("diffData = as.double(diff(" + this.getVector(this.values) + "))");
-            script = "auto.arima(diffData)";
-        }
+        String script = "ar = auto.arima(" + this.getVector(this.values) + ")";
 
         Vector result = (Vector) this.engine.eval(script);
+
+        Vector predictionScript = (Vector) this.engine.eval("predict(ar, n.ahead=1)");
+        double prediction = ((DoubleArrayVector) predictionScript.getElementAsSEXP(0)).toDoubleArray()[0];
+
         double[] meanVector = ((DoubleArrayVector) result.getElementAsSEXP(0)).toDoubleArray();
 
         ListVector listVector = result.getElementAsSEXP(13);
@@ -81,15 +80,21 @@ public class ArimaModel extends PredictionModel {
         double[] residuals = ((DoubleArrayVector) result.getElementAsSEXP(7)).toDoubleArray();
         for (int i = 0; i < residuals.length; i++)  residuals[i] = NumHelper.roundAvoid(residuals[i], 6);
 
+        double[] fitted = new double[residuals.length + 1];
+        Arrays.fill(fitted, 0);
+
+        for (int i = 0; i < residuals.length; i++) {
+            fitted[i] = this.values[i] - residuals[i];
+        }
+        fitted[fitted.length - 1] = prediction;
+
         map.put("AR", ar.toDoubleArray());
         map.put("MA", ma.toDoubleArray());
         map.put("MEAN", new double[]{mean});
         map.put("RESIDUALS", residuals);
         map.put("SRESIDUALS", new double[]{});
+        map.put("FITTED", fitted);
 
-        if (!this.isStacionary) {
-            map.put("DIFFERENCED", this.getDifferencedData(this.values));
-        }
         return map;
     }
 
@@ -111,66 +116,7 @@ public class ArimaModel extends PredictionModel {
 
     @Override
     public double[] fittedValues() {
-        double[] residuals = this.armaParam.get("RESIDUALS");
-
-        double[] ar = this.armaParam.get("AR");
-        double[] ma = this.armaParam.get("MA");
-
-        double[] diff = this.armaParam.get("DIFFERENCED");
-        double[] fitted = new double[diff == null ? this.values.length + 1 : diff.length + 1];
-
-        for (int i = 0; i < fitted.length; i++) {
-            double sumAR = 0;
-            double sumMA = 0;
-
-            if (Math.max(ar.length, ma.length) > i) {
-                fitted[i] = diff == null ? this.values[i] : diff[i];
-                continue;
-            }
-
-            if (i == fitted.length - 1) {
-                int pom = 1;
-                for (int j = 0; j < ar.length; j++) {
-                    if (diff != null) {
-                        sumAR += ar[j] * diff[diff.length - pom++];
-                    } else {
-                        sumAR += ar[j] * this.values[this.values.length - pom++];
-                    }
-                }
-
-                pom = 1;
-                for (int j = 0; j < ma.length; j++) {
-                    sumMA += ma[j] * residuals[residuals.length - pom++];
-                }
-            } else {
-                int pom = 1;
-                for (int j = 0; j < ar.length; j++) {
-                    if (diff != null) {
-                        sumAR += ar[j] * diff[i - pom++];
-                    } else {
-                        sumAR += ar[j] * this.values[i - pom++];
-                    }
-                }
-
-                pom = 1;
-                for (int j = 0; j < ma.length; j++) {
-                    sumMA += ma[j] * residuals[i - pom++];
-                }
-            }
-            fitted[i] = sumAR + sumMA;
-        }
-
-
-        if (diff != null) {
-            double[] unDiffFitted = new double[fitted.length + 1];
-            unDiffFitted[0] = this.values[0];
-            for (int i = 1; i <= fitted.length; i++) {
-                unDiffFitted[i] = fitted[i - 1] + this.values[i - 1];
-            }
-            return unDiffFitted;
-        }
-
-        return fitted;
+        return this.armaParam.get("FITTED");
     }
 
     public double predict() {

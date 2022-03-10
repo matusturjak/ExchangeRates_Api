@@ -23,7 +23,7 @@ public class ExchangeRatesChart extends Div {
 
         add(apexCharts);
         setWidth("70%");
-        this.setChart(apexCharts);
+        this.chart = apexCharts;
     }
 
     public ApexCharts buildChart(List<Double> data, List<String> times, String legend) {

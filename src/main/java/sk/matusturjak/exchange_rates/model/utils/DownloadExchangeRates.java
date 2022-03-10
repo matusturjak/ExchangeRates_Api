@@ -3,11 +3,8 @@ package sk.matusturjak.exchange_rates.model.utils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
@@ -18,12 +15,10 @@ import sk.matusturjak.exchange_rates.service.LatestRateService;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -145,55 +140,55 @@ public class DownloadExchangeRates {
 
         List<LatestRate> help = new ArrayList<>();
         for (int i = 0; i < latestRates.size(); i++) {
-            String first = latestRates.get(i).getRate().getSecondCountry();
+            String first = latestRates.get(i).getRate().getToCurr();
 
             for (int j = 0; j < latestRates.size(); j++) {
-                if (!first.equals(latestRates.get(j).getRate().getSecondCountry())) {
+                if (!first.equals(latestRates.get(j).getRate().getToCurr())) {
                     double rateEurI = latestRates.get(i).getRate().getValue();
                     double rateEurJ = latestRates.get(j).getRate().getValue();
                     double rateIJ = NumHelper.roundAvoid(rateEurJ / rateEurI, 4);
 
-                    help.add(new LatestRate(latestRates.get(i).getRate().getSecondCountry(), latestRates.get(j).getRate().getSecondCountry(), rateIJ));
+                    help.add(new LatestRate(latestRates.get(i).getRate().getToCurr(), latestRates.get(j).getRate().getToCurr(), rateIJ));
                 }
             }
         }
 
         latestRates.forEach(
                 latestRate -> help.add(
-                        new LatestRate(latestRate.getRate().getSecondCountry(), "EUR", NumHelper.roundAvoid((double) 1 / (double) latestRate.getRate().getValue(), 4))
+                        new LatestRate(latestRate.getRate().getToCurr(), "EUR", NumHelper.roundAvoid((double) 1 / (double) latestRate.getRate().getValue(), 4))
                 )
         );
 
         latestRates.addAll(help);
 
         latestRates.forEach(latestRate -> {
-            LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry());
+            LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr());
             if (r != null) {
                 double diff = NumHelper.roundAvoid(latestRate.getRate().getValue() - r.getRate().getValue(), 4);
-                this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), diff);
+                this.latestRateService.updateRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), diff);
             } else {
-                this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), 0));
+                this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), null));
             }
         });
 
-        List<ExchangeRate> latestExchangeRates = this.exchangeRateService.getRates(formattedDate);
+        List<ExchangeRate> lastExchangeRates = this.exchangeRateService.getRates(formattedDate);
 
-        if (latestExchangeRates.size() == 0) {
+        if (lastExchangeRates.size() == 0) {
             latestRates.forEach(latestRate -> this.exchangeRateService.addRate(
-                    new ExchangeRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), formattedDate)
+                    new ExchangeRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), formattedDate)
             ));
         } else {
-            latestExchangeRates.forEach(exchangeRate -> {
+            lastExchangeRates.forEach(exchangeRate -> {
                 if (!exchangeRate.getDate().equals(formattedDate)) {
                     latestRates.stream()
                             .filter(
-                                    latestRate -> latestRate.getRate().getFirstCountry().equals(exchangeRate.getRate().getFirstCountry()) &&
-                                            latestRate.getRate().getSecondCountry().equals(exchangeRate.getRate().getSecondCountry())
+                                    latestRate -> latestRate.getRate().getFromCurr().equals(exchangeRate.getRate().getFromCurr()) &&
+                                            latestRate.getRate().getToCurr().equals(exchangeRate.getRate().getToCurr())
                             )
                             .findFirst()
                             .ifPresent(founded -> this.exchangeRateService.addRate(
                                     new ExchangeRate(
-                                            exchangeRate.getRate().getFirstCountry(), exchangeRate.getRate().getSecondCountry(),
+                                            exchangeRate.getRate().getFromCurr(), exchangeRate.getRate().getToCurr(),
                                             founded.getRate().getValue(),
                                             formattedDate
                                     )

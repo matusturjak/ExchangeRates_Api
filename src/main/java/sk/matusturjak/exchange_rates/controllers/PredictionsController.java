@@ -3,10 +3,7 @@ package sk.matusturjak.exchange_rates.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sk.matusturjak.exchange_rates.service.PredictionService;
 
 @RestController
@@ -19,9 +16,9 @@ public class PredictionsController {
         this.predictionService = predictionService;
     }
 
-    @GetMapping("/{from}-{to}/{numberOfPredictions}")
-    public ResponseEntity getPredictions(@PathVariable("from") String from, @PathVariable("to") String to,
-                                         @PathVariable("numberOfPredictions") Integer numberOfPredictions) {
+    @GetMapping
+    public ResponseEntity getPredictions(@RequestParam("from") String from, @RequestParam("to") String to,
+                                         @RequestParam("ahead") Integer numberOfPredictions) {
         return new ResponseEntity<>(this.predictionService.getPredictions(from, to, numberOfPredictions), HttpStatus.OK);
     }
 }

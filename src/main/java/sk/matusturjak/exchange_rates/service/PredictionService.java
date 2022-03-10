@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface PredictionService {
     List<Prediction> getPredictions(String from, String to, Integer numberOfPredictions);
+    List<Prediction> getPredictions(String from, String to, String method);
     Prediction findPrediction(String from, String to, String method);
 
     void removePredictions();

@@ -47,6 +47,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
+    public List<ExchangeRate> getRatesByDate(String from, String to, String date) {
+        return this.exchangeRateRepository.getRatesByDate(from, to, date);
+    }
+
+    @Override
     public List<ExchangeRate> getRates(String from, String to, String start_at, String end_at) {
         try {
             return this.exchangeRateRepository.getRates(from, to, new SimpleDateFormat("yyyy-MM-dd").parse(start_at),

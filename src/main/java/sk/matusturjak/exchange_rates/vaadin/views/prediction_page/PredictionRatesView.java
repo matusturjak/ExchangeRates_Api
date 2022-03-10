@@ -98,6 +98,14 @@ public class PredictionRatesView extends VerticalLayout {
 
         this.tabs = new Tabs(this.oneDay, this.threeDays, this.fiveDays);
         this.tabs.setMaxWidth("100%");
+
+        this.comboBoxModel = new ComboBox<>("Model");
+        this.comboBoxModel.setItems("ARMA - GARCH", "ARMA - IGARCH");
+        this.comboBoxModel.setValue("ARMA - GARCH");
+        this.comboBoxModel.addValueChangeListener(comboBoxStringComponentValueChangeEvent -> {
+            this.updateTable(1);
+            this.updateResChart();
+        });
         
         this.tabs.addSelectedChangeListener(selectedChangeEvent -> setContent(selectedChangeEvent.getSelectedTab()));
 
@@ -137,14 +145,6 @@ public class PredictionRatesView extends VerticalLayout {
 
         currLayout.add(this.firstCurr, this.secondCurr);
 
-        this.comboBoxModel = new ComboBox<>("Model");
-        this.comboBoxModel.setItems("ARMA - GARCH", "ARMA - IGARCH");
-        this.comboBoxModel.setValue("ARMA - GARCH");
-        this.comboBoxModel.addValueChangeListener(comboBoxStringComponentValueChangeEvent -> {
-            this.updateTable(1);
-            this.updateResChart();
-        });
-
         this.nameOfModel = new Span("ARMA - GARCH");
 
         this.residualsCheckbox = new Checkbox("Show residuals");
@@ -172,7 +172,7 @@ public class PredictionRatesView extends VerticalLayout {
         this.residualsCheckbox.setValue(true);
 
         this.nameOfModel.getStyle().set("font-weight", "bold");
-        HorizontalLayout headerLayout = new HorizontalLayout(this.comboBoxModel, this.residualsCheckbox);
+        HorizontalLayout headerLayout = new HorizontalLayout(this.nameOfModel, this.comboBoxModel, this.residualsCheckbox);
         headerLayout.setAlignItems(Alignment.START);
         headerLayout.setFlexGrow(1, this.nameOfModel);
 
@@ -236,10 +236,9 @@ public class PredictionRatesView extends VerticalLayout {
             if (this.dateToRes.getValue().toString().compareTo(times.get(times.size() - 1)) >=0) {
                 times.add(new MyDate().addDays(times.get(times.size()-1),1));
             }
-            String method = this.comboBoxModel.getValue().contains("igarch") ? "arma_igarch1" : "arma_garch1";
             this.resChart.updateChart(
-                    this.modelOutputService.getResiduals(this.firstCurr.getValue(), this.secondCurr.getValue(),"arma_garch1", fDate, tDate),
-                    this.modelOutputService.getSigma(this.firstCurr.getValue(), this.secondCurr.getValue(), fDate, tDate, "arma_garch1"),
+                    this.modelOutputService.getResiduals(this.firstCurr.getValue(), this.secondCurr.getValue(),this.getMethod(1), fDate, tDate),
+                    this.modelOutputService.getSigma(this.firstCurr.getValue(), this.secondCurr.getValue(), fDate, tDate, this.getMethod(1)),
                     times
             );
         } else if (this.tabs.getSelectedTab().equals(this.threeDays)) {
@@ -300,7 +299,7 @@ public class PredictionRatesView extends VerticalLayout {
         List<ExchangeRate> rates = this.getRates();
 
         List<String> times = rates.stream().map(ExchangeRate::getDate).collect(Collectors.toList());
-        times.addAll(this.predictionService.getPredictions(this.firstCurr.getValue(), this.secondCurr.getValue(), 1)
+        times.addAll(this.predictionService.getPredictions(this.firstCurr.getValue(), this.secondCurr.getValue(), this.getMethod(1))
                 .stream().map(Prediction::getDate).collect(Collectors.toList()));
 
 //        List<String> allTimes = this.exchangeRateService.getAllRates(this.firstCurr.getValue(), this.secondCurr.getValue())
@@ -360,14 +359,19 @@ public class PredictionRatesView extends VerticalLayout {
         tabLayout.removeAll();
 
         if (selectedTab.equals(this.oneDay)) {
-            this.nameOfModel.setText("ARMA - GARCH");
+            this.comboBoxModel.setVisible(true);
+            this.nameOfModel.setVisible(false);
             this.updateTable(1);
             tabLayout.add(this.predictionTable);
         } else if (selectedTab.equals(this.threeDays)) {
+            this.comboBoxModel.setVisible(false);
+            this.nameOfModel.setVisible(true);
             this.nameOfModel.setText("Exponential smoothing");
             this.updateTable(3);
             tabLayout.add(this.predictionTable);
         } else {
+            this.comboBoxModel.setVisible(false);
+            this.nameOfModel.setVisible(true);
             this.nameOfModel.setText("Exponential smoothing");
             this.updateTable(5);
             tabLayout.add(this.predictionTable);
@@ -377,7 +381,7 @@ public class PredictionRatesView extends VerticalLayout {
     public void updateTable(int num) {
         List<PredictionTableRow> list = new ArrayList<>();
 
-        this.predictionService.getPredictions(this.firstCurr.getValue(), this.secondCurr.getValue(), num)
+        this.predictionService.getPredictions(this.firstCurr.getValue(), this.secondCurr.getValue(), this.getMethod(num))
                 .forEach(prediction -> list.add(new PredictionTableRow(prediction.getDate(), prediction.getRate().getValue())));
 
         List<ExchangeRate> rates = this.getRates();
@@ -393,7 +397,7 @@ public class PredictionRatesView extends VerticalLayout {
         List<Double> fitted = this.modelOutputService.getLatestFitted(
                 this.firstCurr.getValue(),
                 this.secondCurr.getValue(),
-                num,
+                this.getMethod(num),
                 rates.size() + num
         );
         List<String> times = rates.stream().map(rate -> rate.getDate()).collect(Collectors.toList());
@@ -404,7 +408,7 @@ public class PredictionRatesView extends VerticalLayout {
         if (num == 1) {
             List<Double> residuals =
                     this.modelOutputService.getResiduals(
-                            this.firstCurr.getValue(), this.secondCurr.getValue(), "arma_garch1",
+                            this.firstCurr.getValue(), this.secondCurr.getValue(), this.getMethod(num),
                             this.dateMapRes.get(this.dateFromRes.getValue().toString()),
                             null
                     );
@@ -413,7 +417,7 @@ public class PredictionRatesView extends VerticalLayout {
                             this.firstCurr.getValue(), this.secondCurr.getValue(),
                             this.dateMapRes.get(this.dateFromRes.getValue().toString()),
                             null,
-                            "arma_garch1"
+                            this.getMethod(num)
                     );
             this.labelPredictionsVol.setVisible(true);
             this.predictSigmaTable.setVisible(true);
@@ -437,5 +441,15 @@ public class PredictionRatesView extends VerticalLayout {
 
     public List<ExchangeRate> getRates() {
         return this.exchangeRateService.getLastRates(this.firstCurr.getValue(), this.secondCurr.getValue(), 10);
+    }
+
+    private String getMethod(int numOfPredictions) {
+        if (numOfPredictions == 1) {
+            return this.comboBoxModel.getValue().contains("IGARCH") ? "arma_igarch1" : "arma_garch1";
+        } else if (numOfPredictions == 3) {
+            return "exp3";
+        } else {
+            return "exp5";
+        }
     }
 }

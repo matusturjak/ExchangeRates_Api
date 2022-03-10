@@ -12,15 +12,15 @@ import java.util.List;
 @Repository
 public interface LatestRateRepository extends JpaRepository<LatestRate, Long> {
 
-    @Query(value = "SELECT * FROM latest_rates WHERE first_country LIKE ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM latest_rates WHERE from_curr LIKE ?1", nativeQuery = true)
     List<LatestRate> getLatestRates(String from);
 
-    @Query(value = "SELECT * FROM latest_rates WHERE first_country LIKE ?1 AND second_country LIKE ?2", nativeQuery = true)
+    @Query(value = "SELECT * FROM latest_rates WHERE from_curr LIKE ?1 AND to_curr LIKE ?2", nativeQuery = true)
     LatestRate getLatestRate(String from, String to);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE latest_rates SET value = ?3, difference = ?4 WHERE first_country = ?1 AND second_country = ?2", nativeQuery = true)
+    @Query(value = "UPDATE latest_rates SET value = ?3, difference = ?4 WHERE from_curr = ?1 AND to_curr = ?2", nativeQuery = true)
     void updateRate(String from, String to, double value, double difference);
 
     @Query(value = "SELECT count(*) from latest_rates", nativeQuery = true)

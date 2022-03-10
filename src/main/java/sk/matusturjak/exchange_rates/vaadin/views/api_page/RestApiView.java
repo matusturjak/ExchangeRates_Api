@@ -46,37 +46,31 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.addColumn(RequestParam::getDescription).setHeader("Description");
 
         List<RequestParam> requestParams = new LinkedList<>();
-        requestParams.add(new RequestParam("EUR", "Code of base currency"));
-        requestParams.add(new RequestParam("CZK", "Code of output currency"));
-        requestParams.add(new RequestParam("3", "Number of predictions (1, 3, 5)"));
+        requestParams.add(new RequestParam("from", "Code of base currency"));
+        requestParams.add(new RequestParam("to", "Code of output currency"));
+        requestParams.add(new RequestParam("ahead", "Number of predictions (1, 3, 5)"));
 
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/prediction/EUR-CZK/3","[\n" +
+        add(new EndPointView("http://localhost:8080/prediction?from=EUR&to=CZK&ahead=1","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
-                "            \"value\": 25.0993\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
+                "            \"value\": 25.3924\n" +
                 "        },\n" +
-                "        \"date\": \"2021-12-24\"\n" +
+                "        \"date\": \"2022-03-10\",\n" +
+                "        \"method\": \"ARIMA-GARCH\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
-                "            \"value\": 25.0649\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
+                "            \"value\": 25.3924\n" +
                 "        },\n" +
-                "        \"date\": \"2021-12-25\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
-                "            \"value\": 25.0306\n" +
-                "        },\n" +
-                "        \"date\": \"2021-12-26\"\n" +
+                "        \"date\": \"2022-03-10\",\n" +
+                "        \"method\": \"ARIMA-IGARCH\"\n" +
                 "    }\n" +
                 "]", requestParamGrid));
     }
@@ -96,24 +90,24 @@ public class RestApiView extends VerticalLayout {
         add(new EndPointView("http://localhost:8080/latest/EUR","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"AUD\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"AUD\",\n" +
                 "            \"value\": 1.5639\n" +
                 "        },\n" +
                 "        \"difference\": 0.0307\n" +
                 "    },\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"BGN\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"BGN\",\n" +
                 "            \"value\": 1.9558\n" +
                 "        },\n" +
                 "        \"difference\": 0\n" +
                 "    },\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"BRL\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"BRL\",\n" +
                 "            \"value\": 6.4015\n" +
                 "        },\n" +
                 "        \"difference\": 0.0634\n" +
@@ -129,16 +123,16 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.addColumn(RequestParam::getDescription).setHeader("Description");
 
         requestParams = new LinkedList<>();
-        requestParams.add(new RequestParam("EUR", "Code of base currency"));
-        requestParams.add(new RequestParam("CZK", "Code of output currency"));
+        requestParams.add(new RequestParam("from", "Code of base currency"));
+        requestParams.add(new RequestParam("to", "Code of output currency"));
 
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/latest/EUR/CZK","{\n" +
+        add(new EndPointView("http://localhost:8080/latest?from=EUR&to=CZK","{\n" +
                 "    \"rate\": {\n" +
-                "        \"firstCountry\": \"EUR\",\n" +
-                "        \"secondCountry\": \"CZK\",\n" +
+                "        \"from\": \"EUR\",\n" +
+                "        \"to\": \"CZK\",\n" +
                 "        \"value\": 25.088\n" +
                 "    },\n" +
                 "    \"difference\": 0.7307\n" +
@@ -153,35 +147,35 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.addColumn(RequestParam::getDescription).setHeader("Description");
 
         List<RequestParam> requestParams = new LinkedList<>();
-        requestParams.add(new RequestParam("EUR", "Code of base currency"));
-        requestParams.add(new RequestParam("CZK", "Code of output currency"));
-        requestParams.add(new RequestParam("2019-11-26", "start at"));
-        requestParams.add(new RequestParam("2019-11-29", "end at"));
+        requestParams.add(new RequestParam("from", "Code of base currency"));
+        requestParams.add(new RequestParam("to", "Code of output currency"));
+        requestParams.add(new RequestParam("2019-11-27", "start date"));
+        requestParams.add(new RequestParam("2019-11-29", "end date"));
 
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/rates/EUR-CZK/2019-11-26/2019-11-29","[\n" +
+        add(new EndPointView("http://localhost:8080/rates/2019-11-27/2019-11-29?from=EUR&to=CZK","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
                 "            \"value\": 25.515\n" +
                 "        },\n" +
                 "        \"date\": \"2019-11-27\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
                 "            \"value\": 25.574\n" +
                 "        },\n" +
                 "        \"date\": \"2019-11-28\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
                 "            \"value\": 25.515\n" +
                 "        },\n" +
                 "        \"date\": \"2019-11-29\"\n" +
@@ -195,37 +189,29 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.addColumn(RequestParam::getDescription).setHeader("Description");
 
         requestParams = new LinkedList<>();
-        requestParams.add(new RequestParam("EUR", "Code of base currency"));
-        requestParams.add(new RequestParam("CZK", "Code of output currency"));
-        requestParams.add(new RequestParam("3", "number of latest rates <1, infinity>"));
+        requestParams.add(new RequestParam("from", "Code of base currency"));
+        requestParams.add(new RequestParam("to", "Code of output currency"));
+        requestParams.add(new RequestParam("count", "number of latest rates from now <1, infinity>"));
 
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/rates/EUR-CZK/3","[\n" +
+        add(new EndPointView("http://localhost:8080/rates/latest?from=EUR&to=CZK&count=2","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
-                "            \"value\": 25.24\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
+                "            \"value\": 25.642\n" +
                 "        },\n" +
-                "        \"date\": \"2021-12-21\"\n" +
+                "        \"date\": \"2022-03-08\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
-                "            \"value\": 25.24\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
+                "            \"value\": 25.364\n" +
                 "        },\n" +
-                "        \"date\": \"2021-12-22\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
-                "            \"value\": 25.088\n" +
-                "        },\n" +
-                "        \"date\": \"2021-12-23\"\n" +
+                "        \"date\": \"2022-03-09\"\n" +
                 "    }\n" +
                 "]"
                 , requestParamGrid));
@@ -236,31 +222,56 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.addColumn(RequestParam::getDescription).setHeader("Description");
 
         requestParams = new LinkedList<>();
-        requestParams.add(new RequestParam("EUR", "Code of base currency"));
-        requestParams.add(new RequestParam("CZK", "Code of output currency"));
+        requestParams.add(new RequestParam("from", "Code of base currency"));
+        requestParams.add(new RequestParam("to", "Code of output currency"));
 
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/rates/EUR-CZK","[\n" +
+        add(new EndPointView("http://localhost:8080/rates/all?from=EUR&to=CZK","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
                 "            \"value\": 25.752\n" +
                 "        },\n" +
                 "        \"date\": \"2019-01-02\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
-                "            \"firstCountry\": \"EUR\",\n" +
-                "            \"secondCountry\": \"CZK\",\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
                 "            \"value\": 25.683\n" +
                 "        },\n" +
                 "        \"date\": \"2019-01-03\"\n" +
                 "    },\n" +
                 "...\n" +
                 "...\n" +
+                "]"
+                , requestParamGrid));
+
+        requestParamGrid = new Grid<>(RequestParam.class,false);
+        requestParamGrid.setAllRowsVisible(true);
+        requestParamGrid.addColumn(RequestParam::getValue).setHeader("Value");
+        requestParamGrid.addColumn(RequestParam::getDescription).setHeader("Description");
+
+        requestParams = new LinkedList<>();
+        requestParams.add(new RequestParam("2022-03-09", "specific date"));
+        requestParams.add(new RequestParam("from", "Code of base currency"));
+        requestParams.add(new RequestParam("to", "Code of output currency"));
+
+        requestParamGrid.setItems(requestParams);
+        requestParamGrid.getColumns().get(1).setWidth("20em");
+
+        add(new EndPointView("http://localhost:8080/rates/2022-03-09?from=EUR&to=CZK","[\n" +
+                "    {\n" +
+                "        \"rate\": {\n" +
+                "            \"from\": \"EUR\",\n" +
+                "            \"to\": \"CZK\",\n" +
+                "            \"value\": 25.364\n" +
+                "        },\n" +
+                "        \"date\": \"2022-03-09\"\n" +
+                "    }\n" +
                 "]"
                 , requestParamGrid));
     }

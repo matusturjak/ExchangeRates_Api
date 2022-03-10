@@ -1,15 +1,21 @@
 package sk.matusturjak.exchange_rates.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
+import java.util.Objects;
 
 @Embeddable
 public class Rate {
 
-    @Column(name = "first_country", nullable = false, columnDefinition = "VARCHAR(3)")
-    private String firstCountry;
+    @Column(name = "from_curr", nullable = false, columnDefinition = "VARCHAR(3)")
+    @JsonProperty("from")
+    private String fromCurr;
 
-    @Column(name = "second_country", nullable = false, columnDefinition = "VARCHAR(3)")
-    private String secondCountry;
+    @Column(name = "to_curr", nullable = false, columnDefinition = "VARCHAR(3)")
+    @JsonProperty("to")
+    private String toCurr;
 
     @Column(name = "value", nullable = false)
     private double value;
@@ -17,26 +23,26 @@ public class Rate {
     public Rate() {
     }
 
-    Rate(String firstCountry, String secondCountry, double value) {
-        this.firstCountry = firstCountry;
-        this.secondCountry = secondCountry;
+    Rate(String fromCurr, String toCurr, double value) {
+        this.fromCurr = fromCurr;
+        this.toCurr = toCurr;
         this.value = value;
     }
 
-    public String getFirstCountry() {
-        return firstCountry;
+    public String getFromCurr() {
+        return fromCurr;
     }
 
-    public void setFirstCountry(String firstCountry) {
-        this.firstCountry = firstCountry;
+    public void setFromCurr(String firstCountry) {
+        this.fromCurr = firstCountry;
     }
 
-    public String getSecondCountry() {
-        return secondCountry;
+    public String getToCurr() {
+        return toCurr;
     }
 
-    public void setSecondCountry(String secondCountry) {
-        this.secondCountry = secondCountry;
+    public void setToCurr(String secondCountry) {
+        this.toCurr = secondCountry;
     }
 
     public double getValue() {
@@ -50,9 +56,20 @@ public class Rate {
     @Override
     public String toString() {
         return "Rate{" +
-                "firstCountry='" + firstCountry + '\'' +
-                ", secondCountry='" + secondCountry + '\'' +
+                "from='" + fromCurr + '\'' +
+                ", to='" + toCurr + '\'' +
                 ", value=" + value +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Rate rate = (Rate) o;
+        return Objects.equals(fromCurr, rate.fromCurr) && Objects.equals(toCurr, rate.toCurr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fromCurr, toCurr, value);
     }
 }

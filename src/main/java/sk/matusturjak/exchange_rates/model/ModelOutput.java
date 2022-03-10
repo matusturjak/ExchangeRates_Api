@@ -16,11 +16,11 @@ public class ModelOutput {
     @Column(name = "method")
     private String method;
 
-    @Column(name = "first_country", columnDefinition = "VARCHAR(3)")
-    private String firstCountry;
+    @Column(name = "from_curr", columnDefinition = "VARCHAR(3)")
+    private String fromCurr;
 
-    @Column(name = "second_country", columnDefinition = "VARCHAR(3)")
-    private String secondCountry;
+    @Column(name = "to_curr", columnDefinition = "VARCHAR(3)")
+    private String toCurr;
 
     @Column(name = "fitted", columnDefinition = "TEXT")
     private String fitted;
@@ -34,10 +34,10 @@ public class ModelOutput {
     public ModelOutput() {
     }
 
-    public ModelOutput(String method, String firstCountry, String secondCountry, String residuals, String sigma, String fitted) {
+    public ModelOutput(String method, String fromCurr, String toCurr, String residuals, String sigma, String fitted) {
         this.method = method;
-        this.firstCountry = firstCountry;
-        this.secondCountry = secondCountry;
+        this.fromCurr = fromCurr;
+        this.toCurr = toCurr;
         this.residuals = residuals;
         this.sigma = sigma;
         this.fitted = fitted;
@@ -51,20 +51,20 @@ public class ModelOutput {
         return id;
     }
 
-    public String getFirstCountry() {
-        return firstCountry;
+    public String getFromCurr() {
+        return fromCurr;
     }
 
-    public void setFirstCountry(String firstCountry) {
-        this.firstCountry = firstCountry;
+    public void setFromCurr(String firstCountry) {
+        this.fromCurr = firstCountry;
     }
 
-    public String getSecondCountry() {
-        return secondCountry;
+    public String getToCurr() {
+        return toCurr;
     }
 
-    public void setSecondCountry(String secondCountry) {
-        this.secondCountry = secondCountry;
+    public void setToCurr(String secondCountry) {
+        this.toCurr = secondCountry;
     }
 
     public String getResiduals() {

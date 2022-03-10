@@ -92,12 +92,12 @@ public class ArmaGarchModelTest {
 //        DoubleExponentialSmoothing exponentialSmoothing = new DoubleExponentialSmoothing(values.length, 3);
 //        exponentialSmoothing.fit((Double[]) values, 0.3);
 
-        ArimaModel arimaModel = new ArimaModel(values);
-        arimaModel.calculateArmaModel();
-        ArimaIGarchModel arimaGarchModel = null;
-        if (arimaModel.isHeteroskedasticityInResiduals()) {
-            arimaGarchModel = new ArimaIGarchModel(arimaModel);
-        }
+//        ArimaModel arimaModel = new ArimaModel(values);
+//        arimaModel.calculateArmaModel();
+//        ArimaIGarchModel arimaGarchModel = null;
+//        if (arimaModel.isHeteroskedasticityInResiduals()) {
+//            arimaGarchModel = new ArimaIGarchModel(arimaModel);
+//        }
 
         ArmaGarchModel model = new ArmaGarchModel();
         model.calculateArmaGarchModel(values);
@@ -133,6 +133,5 @@ public class ArmaGarchModelTest {
         }
 
         ArmaGarchModel model = new ArmaGarchModel();
-        model.isSerieStacionary();
     }
 }

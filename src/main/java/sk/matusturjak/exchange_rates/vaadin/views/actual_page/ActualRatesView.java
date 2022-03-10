@@ -11,8 +11,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
+import sk.matusturjak.exchange_rates.model.LatestRate;
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.model.utils.StaticVariables;
+import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
 import sk.matusturjak.exchange_rates.vaadin.views.MainLayout;
 
@@ -27,9 +29,11 @@ public class ActualRatesView extends VerticalLayout {
     private NumberField baseValueField;
 
     private LatestRateService latestRateService;
+    private ExchangeRateService exchangeRateService;
 
-    public ActualRatesView(LatestRateService latestRateService) {
+    public ActualRatesView(LatestRateService latestRateService, ExchangeRateService exchangeRateService) {
         this.latestRateService = latestRateService;
+        this.exchangeRateService = exchangeRateService;
 
         this.baseCurr = new ComboBox<>();
         this.baseCurr.setItems(StaticVariables.currencies);
@@ -59,25 +63,21 @@ public class ActualRatesView extends VerticalLayout {
     private Grid<CurrencyTableRow> createTable() {
         List<CurrencyTableRow> list = new ArrayList<>();
 
-        this.latestRateService.getLatestRates(this.baseCurr.getValue())
-                .forEach(latestRate -> {
-                    Icon icon;
-                    if (latestRate.getDifference() < 0) {
-                        icon = VaadinIcon.ARROW_DOWN.create();
-                        icon.setColor("red");
-                    } else {
-                        icon = VaadinIcon.ARROW_UP.create();
-                        icon.setColor("green");
-                    }
-                    list.add(
-                            new CurrencyTableRow(
-                                    this.baseCurr.getValue(),
-                                    latestRate.getRate().getSecondCountry(),
-                                    latestRate.getRate().getValue(),
-                                    latestRate.getDifference()
-                            )
-                    );
-                });
+        List<LatestRate> latestRates = this.latestRateService.getLatestRates(this.baseCurr.getValue());
+        latestRates.forEach(latestRate -> {
+            Icon icon;
+            if (latestRate.getDifference() == null) {
+                latestRate.setDifference(0d);
+            }
+            list.add(
+                    new CurrencyTableRow(
+                            this.baseCurr.getValue(),
+                            latestRate.getRate().getToCurr(),
+                            latestRate.getRate().getValue(),
+                            latestRate.getDifference()
+                    )
+            );
+        });
 
         Grid<CurrencyTableRow> grid = new Grid<>(CurrencyTableRow.class);
         grid.setItems(list);
@@ -85,7 +85,10 @@ public class ActualRatesView extends VerticalLayout {
 
         grid.addComponentColumn(item -> {
             Icon icon;
-            if (item.getDiff() < 0) {
+            if (item.getDiff() == 0) {
+                icon = VaadinIcon.MINUS.create();
+                icon.setColor("black");
+            } else if (item.getDiff() < 0) {
                 icon = VaadinIcon.ARROW_DOWN.create();
                 icon.setColor("red");
             } else {
@@ -105,17 +108,13 @@ public class ActualRatesView extends VerticalLayout {
         this.latestRateService.getLatestRates(this.baseCurr.getValue())
                 .forEach(latestRate -> {
                     Icon icon;
-                    if (latestRate.getDifference() < 0) {
-                        icon = VaadinIcon.ARROW_DOWN.create();
-                        icon.setColor("red");
-                    } else {
-                        icon = VaadinIcon.ARROW_UP.create();
-                        icon.setColor("green");
+                    if (latestRate.getDifference() == null) {
+                        latestRate.setDifference(0d);
                     }
                     list.add(
                             new CurrencyTableRow(
                                     this.baseCurr.getValue(),
-                                    latestRate.getRate().getSecondCountry(),
+                                    latestRate.getRate().getToCurr(),
                                     NumHelper.roundAvoid(latestRate.getRate().getValue() * this.baseValueField.getValue(), 4),
                                     latestRate.getDifference()
                             )
@@ -127,7 +126,10 @@ public class ActualRatesView extends VerticalLayout {
 
         this.table.addComponentColumn(item -> {
             Icon icon;
-            if (item.getDiff() < 0) {
+            if (item.getDiff() == 0) {
+                icon = VaadinIcon.MINUS.create();
+                icon.setColor("black");
+            } else if (item.getDiff() < 0) {
                 icon = VaadinIcon.ARROW_DOWN.create();
                 icon.setColor("red");
             } else {
