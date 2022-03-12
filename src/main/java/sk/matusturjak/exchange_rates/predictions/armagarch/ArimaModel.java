@@ -1,11 +1,9 @@
 package sk.matusturjak.exchange_rates.predictions.armagarch;
 
-import org.renjin.script.RenjinScriptEngine;
 import org.renjin.sexp.DoubleArrayVector;
 import org.renjin.sexp.ListVector;
 import org.renjin.sexp.Vector;
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
-import sk.matusturjak.exchange_rates.predictions.PredictionModelInterface;
 
 import javax.script.ScriptException;
 import java.util.Arrays;
@@ -35,7 +33,7 @@ public class ArimaModel extends PredictionModel {
 
     public void calculateArmaModel() throws Exception {
         this.isStacionary = this.isSerieStacionary();
-        this.armaParam = this.getArmaParam();
+        this.armaParam = this.calculateArmaParam();
     }
 
     public boolean isHeteroskedasticityInResiduals() throws ScriptException {
@@ -53,28 +51,26 @@ public class ArimaModel extends PredictionModel {
         return pValue <= 0.01;
     }
 
-    public HashMap<String, double[]> getArmaParam() throws ScriptException {
+    public HashMap<String, double[]> calculateArmaParam() throws ScriptException {
         HashMap<String, double[]> map = new HashMap<>();
 
         String script = "ar = auto.arima(" + this.getVector(this.values) + ")";
-
         Vector result = (Vector) this.engine.eval(script);
-
-        Vector predictionScript = (Vector) this.engine.eval("predict(ar, n.ahead=1)");
-        double prediction = ((DoubleArrayVector) predictionScript.getElementAsSEXP(0)).toDoubleArray()[0];
-
-        double[] meanVector = ((DoubleArrayVector) result.getElementAsSEXP(0)).toDoubleArray();
 
         ListVector listVector = result.getElementAsSEXP(13);
 
         DoubleArrayVector ar = (DoubleArrayVector) listVector.getElementAsSEXP(0);
         DoubleArrayVector ma = (DoubleArrayVector) listVector.getElementAsSEXP(1);
+        DoubleArrayVector diff = (DoubleArrayVector) listVector.getElementAsSEXP(2);
 
-        double mean = 0d;
-        if (meanVector.length > 0 && meanVector.length == ar.length() + ma.length() + 1) {
-            mean = meanVector[meanVector.length - 1];
-        } else  {
-            mean = 0;
+        Vector predictionScript = null;
+        double prediction = -1;
+        try {
+            predictionScript = (Vector) this.engine.eval("pr = predict(ar, n.ahead=1)");
+            prediction = ((DoubleArrayVector) predictionScript.getElementAsSEXP(0)).toDoubleArray()[0];
+        } catch(Exception ex) {
+            script = "ar = arima(" + this.getVector(this.values) + ", order = c(" + ar.length() +"," + diff.toDoubleArray()[0] +"," + ma.length() + "))";
+            result = (Vector) this.engine.eval(script);
         }
 
         double[] residuals = ((DoubleArrayVector) result.getElementAsSEXP(7)).toDoubleArray();
@@ -90,9 +86,7 @@ public class ArimaModel extends PredictionModel {
 
         map.put("AR", ar.toDoubleArray());
         map.put("MA", ma.toDoubleArray());
-        map.put("MEAN", new double[]{mean});
         map.put("RESIDUALS", residuals);
-        map.put("SRESIDUALS", new double[]{});
         map.put("FITTED", fitted);
 
         return map;
@@ -138,5 +132,9 @@ public class ArimaModel extends PredictionModel {
 
         for (double fittedValue : this.fittedValues) arr.append(NumHelper.roundAvoid(fittedValue, 6)).append(",");
         return arr.substring(0, arr.length() - 1);
+    }
+
+    public HashMap<String, double[]> getArmaParam() {
+        return armaParam;
     }
 }

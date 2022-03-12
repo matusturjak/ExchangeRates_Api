@@ -76,7 +76,7 @@ public class ArmaGarchModelTest {
 
     @Test
     public void createArmaGarchModelTest() throws Exception {
-        List<ExchangeRate> list = rateService.getAllRates("EUR", "CZK");
+        List<ExchangeRate> list = rateService.getAllRates("CZK", "HUF");
 
         double sum = list.stream().mapToDouble(value -> value.getRate().getValue()).sum();
         double[] times = new double[list.size()];
@@ -92,17 +92,17 @@ public class ArmaGarchModelTest {
 //        DoubleExponentialSmoothing exponentialSmoothing = new DoubleExponentialSmoothing(values.length, 3);
 //        exponentialSmoothing.fit((Double[]) values, 0.3);
 
-//        ArimaModel arimaModel = new ArimaModel(values);
-//        arimaModel.calculateArmaModel();
-//        ArimaIGarchModel arimaGarchModel = null;
-//        if (arimaModel.isHeteroskedasticityInResiduals()) {
-//            arimaGarchModel = new ArimaIGarchModel(arimaModel);
-//        }
+        ArimaModel arimaModel = new ArimaModel(values);
+        arimaModel.calculateArmaModel();
+        ArimaIGarchModel arimaGarchModel = null;
+        if (arimaModel.isHeteroskedasticityInResiduals()) {
+            arimaGarchModel = new ArimaIGarchModel(arimaModel);
+        }
 
-        ArmaGarchModel model = new ArmaGarchModel();
-        model.calculateArmaGarchModel(values);
+//        ArmaGarchModel model = new ArmaGarchModel();
+//        model.calculateArmaGarchModel(values);
 
-        double[] fitted = model.fittedValues();
+        double[] fitted = arimaGarchModel.fittedValues();
         int b = 0;
     }
 

@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
+import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import sk.matusturjak.exchange_rates.model.LatestRate;
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.model.utils.StaticVariables;
@@ -64,6 +65,19 @@ public class ActualRatesView extends VerticalLayout {
         List<CurrencyTableRow> list = new ArrayList<>();
 
         List<LatestRate> latestRates = this.latestRateService.getLatestRates(this.baseCurr.getValue());
+
+        if (latestRates.stream().noneMatch(latestRate -> latestRate.getDifference() != null)) {
+            List<ExchangeRate> exchangeRates = this.exchangeRateService.get2ndLatestRates();
+            latestRates.forEach(latestRate -> {
+                ExchangeRate second = exchangeRates.stream().filter(exchangeRate -> exchangeRate.getRate().equals(latestRate.getRate())).findFirst().orElse(null);
+                if (second != null) {
+                    double diff = NumHelper.roundAvoid(latestRate.getRate().getValue() - second.getRate().getValue(), 4);
+                    this.latestRateService.updateRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), diff);
+                    latestRate.setDifference(diff);
+                }
+            });
+        }
+
         latestRates.forEach(latestRate -> {
             Icon icon;
             if (latestRate.getDifference() == null) {
@@ -105,7 +119,21 @@ public class ActualRatesView extends VerticalLayout {
     public void updateTable() {
         List<CurrencyTableRow> list = new ArrayList<>();
 
-        this.latestRateService.getLatestRates(this.baseCurr.getValue())
+        List<LatestRate> latestRates = this.latestRateService.getLatestRates(this.baseCurr.getValue());
+
+        if (latestRates.stream().noneMatch(latestRate -> latestRate.getDifference() != null)) {
+            List<ExchangeRate> exchangeRates = this.exchangeRateService.get2ndLatestRates();
+            latestRates.forEach(latestRate -> {
+                ExchangeRate second = exchangeRates.stream().filter(exchangeRate -> exchangeRate.getRate().equals(latestRate.getRate())).findFirst().orElse(null);
+                if (second != null) {
+                    double diff = NumHelper.roundAvoid(latestRate.getRate().getValue() - second.getRate().getValue(), 4);
+                    this.latestRateService.updateRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), diff);
+                    latestRate.setDifference(diff);
+                }
+            });
+        }
+
+        latestRates
                 .forEach(latestRate -> {
                     Icon icon;
                     if (latestRate.getDifference() == null) {

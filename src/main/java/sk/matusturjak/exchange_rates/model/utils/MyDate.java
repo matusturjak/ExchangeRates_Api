@@ -4,8 +4,11 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class MyDate {
     private SimpleDateFormat sdf;
@@ -68,5 +71,11 @@ public class MyDate {
      */
     public int getDayNumber(String d1){
         return this.daysBetween("1970-01-01",d1);
+    }
+
+    public static LocalDate toDate(String s) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        formatter = formatter.withLocale( Locale.US);
+        return LocalDate.parse(s, formatter);
     }
 }

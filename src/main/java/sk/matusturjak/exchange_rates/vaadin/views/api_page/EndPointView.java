@@ -17,7 +17,7 @@ public class EndPointView extends VerticalLayout {
         predictions.setClearButtonVisible(true);
         predictions.setPrefixComponent(VaadinIcon.CODE.create());
         predictions.setReadOnly(true);
-        predictions.getStyle().set("width", "35em");
+        predictions.getStyle().set("width", "40em");
 
         PrismHighlighter json = new PrismHighlighter(jsonResponse, Language.json);
 

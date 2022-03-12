@@ -233,8 +233,9 @@ public class PredictionRatesView extends VerticalLayout {
         times = times.subList(fDate, tDate == null ? times.size() : tDate + 1);
 
         if (this.tabs.getSelectedTab().equals(this.oneDay)) {
-            if (this.dateToRes.getValue().toString().compareTo(times.get(times.size() - 1)) >=0) {
+            if (this.dateToRes.getValue().compareTo(MyDate.toDate((times.get(times.size() - 1)))) > 0) {
                 times.add(new MyDate().addDays(times.get(times.size()-1),1));
+                fDate++;
             }
             this.resChart.updateChart(
                     this.modelOutputService.getResiduals(this.firstCurr.getValue(), this.secondCurr.getValue(),this.getMethod(1), fDate, tDate),
@@ -409,13 +410,13 @@ public class PredictionRatesView extends VerticalLayout {
             List<Double> residuals =
                     this.modelOutputService.getResiduals(
                             this.firstCurr.getValue(), this.secondCurr.getValue(), this.getMethod(num),
-                            this.dateMapRes.get(this.dateFromRes.getValue().toString()),
+                            this.dateMapRes.get(this.dateFromRes.getValue().toString()) + 1,
                             null
                     );
             List<Double> sigmas =
                     this.modelOutputService.getSigma(
                             this.firstCurr.getValue(), this.secondCurr.getValue(),
-                            this.dateMapRes.get(this.dateFromRes.getValue().toString()),
+                            this.dateMapRes.get(this.dateFromRes.getValue().toString()) + 1,
                             null,
                             this.getMethod(num)
                     );

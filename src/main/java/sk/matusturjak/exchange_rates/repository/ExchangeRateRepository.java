@@ -31,6 +31,13 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
             " from exchange_rates ee) tab WHERE rn = 1 and e.id = tab.id)", nativeQuery = true)
     List<ExchangeRate> getLatest();
 
+    @Query(value = "select id, date, from_curr, to_curr, value" +
+            "    from" +
+            "        (select id, date, from_curr, to_curr, value, row_number() over (partition by from_curr, to_curr order by date desc) as row_num" +
+            "         from exchange_rates order by date desc) d" +
+            "    where d.row_num = 2", nativeQuery = true)
+    List<ExchangeRate> get2ndLatestRates();
+
     @Query(value = "SELECT count(*) FROM exchange_rates", nativeQuery = true)
     Integer getSize();
 }

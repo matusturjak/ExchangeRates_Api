@@ -133,11 +133,15 @@ public class CalculatePredictions {
     private void savePredictions(ExchangeRate actualRate, double[] arr, String firstCountry, String secondCountry, String method, String residuals, String sigma, String fitted) {
         for (int l = 0; l < arr.length; l++) {
             Prediction prediction = this.predictionService.findPrediction(firstCountry, secondCountry, method);
+
+            String[] sigmaArr = sigma == null ? null : sigma.split(",");
+            Double predictedSigma = sigmaArr == null ? null : Double.parseDouble(sigmaArr[sigmaArr.length - 1]);
+
             if (prediction == null) {
-                Prediction newPrediction = new Prediction(firstCountry, secondCountry, arr[l], this.date.addDays(actualRate.getDate(), l + 1), method + (arr.length));
+                Prediction newPrediction = new Prediction(firstCountry, secondCountry, arr[l], this.date.addDays(actualRate.getDate(), l + 1), method + (arr.length), predictedSigma);
                 this.predictionService.addPrediction(newPrediction);
             } else {
-                Prediction updatedPrediction = new Prediction(firstCountry, secondCountry, arr[l], this.date.addDays(actualRate.getDate(), l + 1), method + (arr.length));
+                Prediction updatedPrediction = new Prediction(firstCountry, secondCountry, arr[l], this.date.addDays(actualRate.getDate(), l + 1), method + (arr.length), predictedSigma);
                 this.predictionService.updatePredictions(updatedPrediction);
             }
 

@@ -28,4 +28,9 @@ public class LatestRateController {
         return latestRate != null ?
                 new ResponseEntity<>(latestRate, HttpStatus.OK) : new ResponseEntity<>("Not founded..", HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("/conversion")
+    public ResponseEntity getConverted(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam("amount") Double amount) {
+        return new ResponseEntity<>(this.latestRateService.getLatestRate(from, to, amount), HttpStatus.OK);
+    }
 }

@@ -13,6 +13,7 @@ public interface ExchangeRateService {
     List<ExchangeRate> getRates(String from, String to, String start_at, String end_at);
     List<ExchangeRate> getRates(String date);
     List<ExchangeRate> getLatest();
+    List<ExchangeRate> get2ndLatestRates();
 
     Integer getSize();
 }

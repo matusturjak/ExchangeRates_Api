@@ -3,6 +3,7 @@ package sk.matusturjak.exchange_rates.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.matusturjak.exchange_rates.model.LatestRate;
+import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 import sk.matusturjak.exchange_rates.repository.LatestRateRepository;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
 
@@ -30,6 +31,14 @@ public class LatestRateServiceImpl implements LatestRateService {
     @Override
     public LatestRate getLatestRate(String from, String to) {
         return this.latestRateRepository.getLatestRate(from, to);
+    }
+
+    @Override
+    public LatestRate getLatestRate(String from, String to, Double amount) {
+        LatestRate latestRate = this.latestRateRepository.getLatestRate(from, to);
+        double value = latestRate.getRate().getValue();
+        latestRate.getRate().setValue(NumHelper.roundAvoid(value * amount, 4));
+        return latestRate;
     }
 
     @Override

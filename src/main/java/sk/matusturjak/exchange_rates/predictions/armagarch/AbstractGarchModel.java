@@ -1,6 +1,5 @@
 package sk.matusturjak.exchange_rates.predictions.armagarch;
 
-import org.renjin.script.RenjinScriptEngine;
 import org.renjin.sexp.DoubleArrayVector;
 import org.renjin.sexp.Vector;
 import sk.matusturjak.exchange_rates.model.utils.NumHelper;
@@ -53,11 +52,11 @@ public abstract class AbstractGarchModel extends PredictionModel implements Pred
                 double h_t = 0.0d;
                 if (this instanceof ArimaGarchModel) {
                     h_t = this.garchParam.get("OMEGA") +
-                            this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1] - this.armaParam.get("MEAN")[0], 2) +
+                            this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1], 2) +
                             this.garchParam.get("BETA") * h[i - 1];
                 } else {
                     h_t = this.garchParam.get("OMEGA") +
-                            this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1] - this.armaParam.get("MEAN")[0], 2) +
+                            this.garchParam.get("ALPHA") * Math.pow(residuals[i - 1], 2) +
                             (1 - this.garchParam.get("ALPHA")) * h[i - 1];
                 }
 

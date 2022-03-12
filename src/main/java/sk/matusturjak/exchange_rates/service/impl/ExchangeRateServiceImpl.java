@@ -73,6 +73,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
+    public List<ExchangeRate> get2ndLatestRates() {
+        return this.exchangeRateRepository.get2ndLatestRates();
+    }
+
+    @Override
     public Integer getSize() {
         return this.exchangeRateRepository.getSize();
     }

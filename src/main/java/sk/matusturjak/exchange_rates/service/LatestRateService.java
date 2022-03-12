@@ -8,6 +8,7 @@ public interface LatestRateService {
     List<LatestRate> getAllLatestRates();
     List<LatestRate> getLatestRates(String from);
     LatestRate getLatestRate(String from, String to);
+    LatestRate getLatestRate(String from, String to, Double amount);
 
     Integer getSize();
 
