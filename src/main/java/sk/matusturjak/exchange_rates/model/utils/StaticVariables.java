@@ -1,7 +1,10 @@
 package sk.matusturjak.exchange_rates.model.utils;
 
 public class StaticVariables {
-    public static String[] currencies = {"EUR","CAD","CZK","HUF"};
+    //            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
+//            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
+//            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
+    public static String[] currencies = {"EUR","CAD","CZK","HUF","AUD","HRK","CHF","PLN", "BGN", "TRY", "USD", "GBP", "SEK","NOK"};
     public static String ARMA_GARCH="arma_garch";
     public static String ARMA_IGARCH="arma_igarch";
     public static String ARMA="arma";

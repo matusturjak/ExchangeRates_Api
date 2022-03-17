@@ -25,13 +25,13 @@ public class RestApiView extends VerticalLayout {
     public RestApiView() {
         add(new H1("Rest API endpoints"));
 
-        add(new H3("Predictions endpoint"));
+        add(new H2("Predictions endpoint"));
         this.getPredictionRequest();
 
-        add(new H3("Latest rates endpoints"));
+        add(new H2("Latest rates endpoints"));
         this.addLatestRatesEndPoints();
 
-        add(new H3("Historical rates endpoints"));
+        add(new H2("Historical rates endpoints"));
         this.addHistoricalRatesEndPoints();
 
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -42,7 +42,7 @@ public class RestApiView extends VerticalLayout {
     private void getPredictionRequest() {
         TextArea textArea = new TextArea("Description");
         textArea.setValue("This endpoint will return predictions of specific exchange rate. Predictions are " +
-                "calculated by autoregressive models ARIMA-GARCH, ARIMA-IGACH and Exponential Smoothing.");
+                "calculated by autoregressive models: ARIMA-GARCH, ARIMA-IGACH and Exponential Smoothing.");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
         add(textArea);
@@ -85,12 +85,13 @@ public class RestApiView extends VerticalLayout {
     }
 
     private void addLatestRatesEndPoints() {
+        H3 h3 = new H3("1. Endpoint");
         TextArea textArea = new TextArea("Description");
         textArea.setValue("Endpoint which will return latest exchange rates for base currency." +
                 "These rates are updated every day.");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
-        add(textArea);
+        add(h3, textArea);
 
         Grid<RequestParam> requestParamGrid = new Grid<>(RequestParam.class,false);
         requestParamGrid.setAllRowsVisible(true);
@@ -133,11 +134,12 @@ public class RestApiView extends VerticalLayout {
                 "]"
                 , requestParamGrid));
 
+        h3 = new H3("2. Endpoint");
         textArea = new TextArea("Description");
         textArea.setValue("Endpoint will return latest rate of specific currencies.");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
-        add(textArea);
+        add(h3, textArea);
 
         requestParamGrid = new Grid<>(RequestParam.class,false);
         requestParamGrid.setAllRowsVisible(true);
@@ -161,12 +163,13 @@ public class RestApiView extends VerticalLayout {
                 "}"
                 , requestParamGrid));
 
+        h3 = new H3("3. Endpoint");
         textArea = new TextArea("Description");
         textArea.setValue("Endpoint will return latest rate of specific currencies, but user can choose amount" +
                 " of first currency.");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
-        add(textArea);
+        add(h3, textArea);
 
         requestParamGrid = new Grid<>(RequestParam.class,false);
         requestParamGrid.setAllRowsVisible(true);
@@ -193,11 +196,13 @@ public class RestApiView extends VerticalLayout {
     }
 
     private void addHistoricalRatesEndPoints() {
+        H3 h3 = new H3("1. Endpoint");
+        h3.getStyle().set("text-align", "left");
         TextArea textArea = new TextArea("Description");
         textArea.setValue("Endpoint will return historical exchange rates of currencies in date range.");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
-        add(textArea);
+        add(h3, textArea);
 
         Grid<RequestParam> requestParamGrid = new Grid<>(RequestParam.class,false);
         requestParamGrid.setAllRowsVisible(true);
@@ -241,11 +246,12 @@ public class RestApiView extends VerticalLayout {
                 "]"
                 , requestParamGrid));
 
+        h3 = new H3("2. Endpoint");
         textArea = new TextArea("Description");
         textArea.setValue("Endpoint will return last N historical exchange rates for specific currencies");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
-        add(textArea);
+        add(h3, textArea);
 
         requestParamGrid = new Grid<>(RequestParam.class,false);
         requestParamGrid.setAllRowsVisible(true);
@@ -280,12 +286,13 @@ public class RestApiView extends VerticalLayout {
                 "]"
                 , requestParamGrid));
 
+        h3 = new H3("3. Endpoint");
         textArea = new TextArea("Description");
         textArea.setValue("Endpoint will return all historical exchange rates for specific currencies. Historical exchange" +
                 "rates of currencies are available from 01.01.2010");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
-        add(textArea);
+        add(h3, textArea);
 
         requestParamGrid = new Grid<>(RequestParam.class,false);
         requestParamGrid.setAllRowsVisible(true);
@@ -321,11 +328,12 @@ public class RestApiView extends VerticalLayout {
                 "]"
                 , requestParamGrid));
 
+        h3 = new H3("4. Endpoint");
         textArea = new TextArea("Description");
         textArea.setValue("Endpoint will return historical exchange rate of currencies from entered date");
         textArea.getStyle().set("width", "40em");
         textArea.setReadOnly(true);
-        add(textArea);
+        add(h3, textArea);
 
         requestParamGrid = new Grid<>(RequestParam.class,false);
         requestParamGrid.setAllRowsVisible(true);

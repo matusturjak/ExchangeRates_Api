@@ -109,7 +109,7 @@ public class MainLayout extends AppLayout {
 
                 new MenuItemInfo("Historical rates", "la la-chart-area", HistoricRatesView.class), //
 
-                new MenuItemInfo("Rest API", "las la-code", RestApiView.class), //
+                new MenuItemInfo("Rest API doc.", "las la-code", RestApiView.class), //
         };
         List<RouterLink> links = new ArrayList<>();
         for (MenuItemInfo menuItemInfo : menuItems) {

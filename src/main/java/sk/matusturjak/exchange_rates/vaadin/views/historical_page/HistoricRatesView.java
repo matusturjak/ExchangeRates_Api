@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -80,7 +81,7 @@ public class HistoricRatesView extends VerticalLayout {
         layoutCurr.add(this.firstCurr, this.secondCurr);
         layoutDate.add(this.dateFrom, this.dateTo);
 
-        add(new H1("Historical rates"));
+        add(new H2("Historical rates"));
         add(layoutCurr, layoutDate);
         add(this.showGraphButton);
         add(this.chart);

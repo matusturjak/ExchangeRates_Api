@@ -23,8 +23,8 @@ public class AboutView extends VerticalLayout {
     public AboutView() {
         setSpacing(false);
 
-        add(new H2("Exchange Rates API"));
-        add(new Paragraph("Nejaky popis 🤗"));
+        add(new H2("Exchange Rates application"));
+        add(new Paragraph("Application for prediction exchange rates"));
 
         setSizeFull();
         setJustifyContentMode(JustifyContentMode.CENTER);

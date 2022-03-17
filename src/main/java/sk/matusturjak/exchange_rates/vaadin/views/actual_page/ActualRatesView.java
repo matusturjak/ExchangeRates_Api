@@ -4,6 +4,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -55,7 +56,7 @@ public class ActualRatesView extends VerticalLayout {
             this.table.getDataProvider().refreshAll();
         });
 
-        add(new H1("Latest rates"));
+        add(new H2("Latest rates"));
         add(this.baseCurr);
         add(new HorizontalLayout(this.baseValueField,new VerticalLayout(new Label(""),this.enterButton)));
         add(this.table);

@@ -33,7 +33,7 @@ public class DownloadExchangeRates {
 //            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
 //    };
 
-    private static String[] currency = {"EUR","CAD","CZK","HUF"};
+    private static String[] currency = StaticVariables.currencies;
 
     public DownloadExchangeRates(ExchangeRateService exchangeRateService, LatestRateService latestRateService) {
         this.exchangeRateService = exchangeRateService;

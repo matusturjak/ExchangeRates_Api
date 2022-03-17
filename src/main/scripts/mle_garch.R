@@ -1,12 +1,12 @@
 garch_loglik<-function(para,x,mu){
-  # Parameters
+
   omega0=para[1]
   alpha=para[2]
   beta=para[3]
-  # Volatility and loglik initialisation
+
   loglik=0
   h=var(x)
-  # Start of the loop
+
   vol=c()
   for (i in 2:length(x)){
     h=omega0+alpha*(x[i-1]-mu)^2+beta*h
@@ -16,13 +16,12 @@ garch_loglik<-function(para,x,mu){
 }
 
 igarch_loglik<-function(para,x,mu){
-  # Parameters
   omega0=para[1]
   alpha=para[2]
-  # Volatility and loglik initialisation
+
   loglik=0
   h=var(x)
-  # Start of the loop
+
   vol=c()
   for (i in 2:length(x)){
     h=omega0+alpha*(x[i-1]-mu)^2+(1 - alpha)*h

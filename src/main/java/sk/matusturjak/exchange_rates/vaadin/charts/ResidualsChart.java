@@ -48,7 +48,7 @@ public class ResidualsChart extends Div {
                 .withStroke(StrokeBuilder.get().withCurve(Curve.straight).withWidth(0.7d).build())
                 .withSeries(new Series<>("Residuals", arrRes), new Series<>("Conditional SD", arrNeg), new Series<>("Conditional SD", arrPos))
                 .withTitle(TitleSubtitleBuilder.get()
-                        .withText("Predicted conditional SD and residuals of ARIMA models")
+                        .withText("Predicted conditional SD of residuals by (I)GARCH model")
                         .withAlign(Align.left).build())
                 .withSubtitle(TitleSubtitleBuilder.get()
                         .withAlign(Align.left).build())

@@ -99,7 +99,7 @@ public class PredictionRatesView extends VerticalLayout {
         this.tabs = new Tabs(this.oneDay, this.threeDays, this.fiveDays);
         this.tabs.setMaxWidth("100%");
 
-        this.comboBoxModel = new ComboBox<>("Model");
+        this.comboBoxModel = new ComboBox<>("");
         this.comboBoxModel.setItems("ARMA - GARCH", "ARMA - IGARCH");
         this.comboBoxModel.setValue("ARMA - GARCH");
         this.comboBoxModel.addValueChangeListener(comboBoxStringComponentValueChangeEvent -> {
@@ -147,7 +147,7 @@ public class PredictionRatesView extends VerticalLayout {
 
         this.nameOfModel = new Span("ARMA - GARCH");
 
-        this.residualsCheckbox = new Checkbox("Show residuals");
+        this.residualsCheckbox = new Checkbox("Show residuals and volatility predictions");
         this.residualsCheckbox.addValueChangeListener(checkboxClickEvent -> {
             if (this.residualsCheckbox.getValue()) {
                 if (!this.tabs.getSelectedTab().equals(this.oneDay)) {
@@ -178,7 +178,7 @@ public class PredictionRatesView extends VerticalLayout {
 
         setContent(this.tabs.getSelectedTab());
 
-        add(new H1("Predictions"));
+        add(new H2("Predictions"));
         add(currLayout);
         add(this.button);
         add(this.tabs);
@@ -362,17 +362,20 @@ public class PredictionRatesView extends VerticalLayout {
         if (selectedTab.equals(this.oneDay)) {
             this.comboBoxModel.setVisible(true);
             this.nameOfModel.setVisible(false);
+            this.residualsCheckbox.setLabel("Show residuals and volatility predictions");
             this.updateTable(1);
             tabLayout.add(this.predictionTable);
         } else if (selectedTab.equals(this.threeDays)) {
             this.comboBoxModel.setVisible(false);
             this.nameOfModel.setVisible(true);
+            this.residualsCheckbox.setLabel("Show residuals");
             this.nameOfModel.setText("Exponential smoothing");
             this.updateTable(3);
             tabLayout.add(this.predictionTable);
         } else {
             this.comboBoxModel.setVisible(false);
             this.nameOfModel.setVisible(true);
+            this.residualsCheckbox.setLabel("Show residuals");
             this.nameOfModel.setText("Exponential smoothing");
             this.updateTable(5);
             tabLayout.add(this.predictionTable);
