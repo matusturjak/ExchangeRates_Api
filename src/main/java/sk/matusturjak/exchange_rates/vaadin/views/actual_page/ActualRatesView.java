@@ -151,7 +151,7 @@ public class ActualRatesView extends VerticalLayout {
                 });
 
         this.table.setItems(list);
-        this.table.setColumns("firstCountry", "secondCountry", "rate", "diff");
+        this.table.setColumns("from", "to", "rate", "diff");
 
         this.table.addComponentColumn(item -> {
             Icon icon;

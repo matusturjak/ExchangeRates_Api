@@ -60,7 +60,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/prediction?from=EUR&to=CZK&ahead=1","[\n" +
+        add(new EndPointView("GET /prediction?from=EUR&to=CZK&ahead=1","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
                 "            \"value\": 25.2834,\n" +
@@ -104,7 +104,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/latest/EUR","[\n" +
+        add(new EndPointView("GET /latest/EUR","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
                 "            \"from\": \"EUR\",\n" +
@@ -153,7 +153,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/latest?from=EUR&to=CZK","{\n" +
+        add(new EndPointView("GET /latest?from=EUR&to=CZK","{\n" +
                 "    \"rate\": {\n" +
                 "        \"from\": \"EUR\",\n" +
                 "        \"to\": \"CZK\",\n" +
@@ -184,7 +184,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/latest/conversion?from=EUR&to=CZK&amount=15","{\n" +
+        add(new EndPointView("GET /latest/conversion?from=EUR&to=CZK&amount=15","{\n" +
                 "    \"rate\": {\n" +
                 "        \"value\": 379.74,\n" +
                 "        \"from\": \"EUR\",\n" +
@@ -218,7 +218,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/rates/2019-11-27/2019-11-29?from=EUR&to=CZK","[\n" +
+        add(new EndPointView("GET /rates/2019-11-27/2019-11-29?from=EUR&to=CZK","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
                 "            \"from\": \"EUR\",\n" +
@@ -266,7 +266,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/rates/latest?from=EUR&to=CZK&count=2","[\n" +
+        add(new EndPointView("GET /rates/latest?from=EUR&to=CZK&count=2","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
                 "            \"from\": \"EUR\",\n" +
@@ -306,7 +306,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/rates/all?from=EUR&to=CZK","[\n" +
+        add(new EndPointView("GET /rates/all?from=EUR&to=CZK","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
                 "            \"from\": \"EUR\",\n" +
@@ -348,7 +348,7 @@ public class RestApiView extends VerticalLayout {
         requestParamGrid.setItems(requestParams);
         requestParamGrid.getColumns().get(1).setWidth("20em");
 
-        add(new EndPointView("http://localhost:8080/rates/2022-03-09?from=EUR&to=CZK","[\n" +
+        add(new EndPointView("GET /rates/2022-03-09?from=EUR&to=CZK","[\n" +
                 "    {\n" +
                 "        \"rate\": {\n" +
                 "            \"from\": \"EUR\",\n" +

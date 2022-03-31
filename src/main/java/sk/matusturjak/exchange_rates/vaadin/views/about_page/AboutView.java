@@ -1,9 +1,11 @@
 package sk.matusturjak.exchange_rates.vaadin.views.about_page;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -23,8 +25,18 @@ public class AboutView extends VerticalLayout {
     public AboutView() {
         setSpacing(false);
 
-        add(new H2("Exchange Rates application"));
+        add(new H2("Exchange Rates Predictions"));
         add(new Paragraph("Application for prediction exchange rates"));
+
+        FlexLayout footerWrapper = new FlexLayout();
+
+        Div footer = new Div();
+        footer.setText("Developed by Matúš Turják matus.turjak81@gmail.com");
+        footerWrapper.setAlignItems(Alignment.END);
+        footerWrapper.getElement().getStyle().set("order", "999");
+        footerWrapper.add(footer);
+        add(footerWrapper);
+        expand(footerWrapper);
 
         setSizeFull();
         setJustifyContentMode(JustifyContentMode.CENTER);
