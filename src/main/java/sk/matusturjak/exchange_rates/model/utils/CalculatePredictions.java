@@ -42,7 +42,7 @@ public class CalculatePredictions {
         this.date = new MyDate();
     }
 
-    @Scheduled(cron = "0 10 23 * * *", zone = "Europe/Paris")
+    @Scheduled(cron = "0 10 23 * * 1-5", zone = "Europe/Paris")
     public void calculateAndSave() throws Exception {
         this.predictionService.removePredictions();
 

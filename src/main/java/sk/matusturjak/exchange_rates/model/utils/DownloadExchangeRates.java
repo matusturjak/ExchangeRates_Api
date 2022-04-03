@@ -114,7 +114,7 @@ public class DownloadExchangeRates {
         }
     }
 
-    @Scheduled(cron = "0 0 23 * * *", zone = "Europe/Paris")
+    @Scheduled(cron = "0 0 23 * * 1-5", zone = "Europe/Paris")
     public void downloadAndSaveLatestRatesFromECB() throws Exception {
         List<LatestRate> latestRates = new ArrayList<>();
 
@@ -125,6 +125,10 @@ public class DownloadExchangeRates {
         DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = originalFormat.parse(dateFromPage);
         String formattedDate = targetFormat.format(date);
+
+        if (!this.exchangeRateService.getRates(formattedDate).isEmpty() && this.latestRateService.getSize() != 0){
+            return;
+        }
 
         Element table = document.getElementsByClass("forextable").get(0);
 
