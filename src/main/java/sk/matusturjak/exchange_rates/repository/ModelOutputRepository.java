@@ -22,6 +22,6 @@ public interface ModelOutputRepository extends JpaRepository<ModelOutput, Long> 
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE model_output set residuals = ?4, sigma = ?5 WHERE from_curr like ?1 and to_curr like ?2 and method like ?3", nativeQuery = true)
-    void updateModelOutput(String from, String to, String method, String residuals, String sigma);
+    @Query(value = "UPDATE model_output set residuals = ?4, sigma = ?5, fitted = ?6 WHERE from_curr like ?1 and to_curr like ?2 and method like ?3", nativeQuery = true)
+    void updateModelOutput(String from, String to, String method, String residuals, String sigma, String fitted);
 }

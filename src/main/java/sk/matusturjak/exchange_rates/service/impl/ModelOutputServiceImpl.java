@@ -111,7 +111,8 @@ public class ModelOutputServiceImpl implements ModelOutputService {
                 modelOutput.getToCurr(),
                 modelOutput.getMethod(),
                 modelOutput.getResiduals(),
-                modelOutput.getSigma()
+                modelOutput.getSigma(),
+                modelOutput.getFitted()
         );
     }
 }
