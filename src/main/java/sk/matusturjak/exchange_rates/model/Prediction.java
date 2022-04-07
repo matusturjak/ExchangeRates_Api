@@ -1,11 +1,13 @@
 package sk.matusturjak.exchange_rates.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "predictions", indexes = {@Index(name = "ind_pred", columnList = "first_country,second_country,method", unique = false)})
+@Table(name = "predictions", indexes = {@Index(name = "ind_pred", columnList = "from_curr,to_curr,method", unique = false)})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Prediction {
 
     @Id
@@ -20,16 +22,19 @@ public class Prediction {
     private String date;
 
     @Column(name = "method", nullable = false)
-    @JsonIgnore
     private String method;
+
+    @Column(name = "volatility")
+    private Double volatility;
 
     public Prediction() {
     }
 
-    public Prediction(String firstCountry, String secondCountry, double value, String date, String method) {
-        this.rate = new Rate(firstCountry, secondCountry, value);
+    public Prediction(String fromCurr, String toCurr, double value, String date, String method, Double volatility) {
+        this.rate = new Rate(fromCurr, toCurr, value);
         this.method = method;
         this.date = date;
+        this.volatility = volatility;
     }
 
     public Long getId() {
@@ -62,5 +67,13 @@ public class Prediction {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public Double getVolatility() {
+        return volatility;
+    }
+
+    public void setVolatility(Double volatility) {
+        this.volatility = volatility;
     }
 }

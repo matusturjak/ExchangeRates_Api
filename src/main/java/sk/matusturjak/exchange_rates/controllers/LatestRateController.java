@@ -11,12 +11,10 @@ import sk.matusturjak.exchange_rates.service.LatestRateService;
 @RequestMapping("/latest")
 public class LatestRateController {
 
-    @Autowired
-    private LatestRateService latestRateService;
+    private final LatestRateService latestRateService;
 
-    @GetMapping
-    public ResponseEntity getAllLatest() {
-        return new ResponseEntity<>(this.latestRateService.getAllLatestRates(), HttpStatus.OK);
+    public LatestRateController(LatestRateService latestRateService) {
+        this.latestRateService = latestRateService;
     }
 
     @GetMapping("/{from}")
@@ -24,10 +22,15 @@ public class LatestRateController {
         return new ResponseEntity<>(this.latestRateService.getLatestRates(from), HttpStatus.OK);
     }
 
-    @GetMapping("/{from}/{to}")
-    public ResponseEntity getLatest(@PathVariable("from") String from, @PathVariable("to") String to) {
+    @GetMapping
+    public ResponseEntity getLatest(@RequestParam("from") String from, @RequestParam("to") String to) {
         LatestRate latestRate = this.latestRateService.getLatestRate(from, to);
         return latestRate != null ?
                 new ResponseEntity<>(latestRate, HttpStatus.OK) : new ResponseEntity<>("Not founded..", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/conversion")
+    public ResponseEntity getConverted(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam("amount") Double amount) {
+        return new ResponseEntity<>(this.latestRateService.getLatestRate(from, to, amount), HttpStatus.OK);
     }
 }

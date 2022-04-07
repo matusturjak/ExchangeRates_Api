@@ -1,18 +1,10 @@
-package sk.matusturjak.exchange_rates.model.others;
+package sk.matusturjak.exchange_rates.model.utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import sk.matusturjak.exchange_rates.model.ExchangeRate;
@@ -23,36 +15,29 @@ import sk.matusturjak.exchange_rates.service.LatestRateService;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
 public class DownloadExchangeRates {
+    private final ExchangeRateService exchangeRateService;
+    private final LatestRateService latestRateService;
 
-    @Autowired
-    private ExchangeRateService exchangeRateService;
+//    private static String[] currency = {
+//            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
+//            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
+//            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
+//    };
 
-    @Autowired
-    private LatestRateService latestRateService;
+    private static String[] currency = StaticVariables.currencies;
 
-    private final RestTemplate restTemplate;
-
-    private static String[] currency = {
-            "EUR","CAD","HKD","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR",
-            "BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD",
-            "ZAR","USD","MXN","ILS","GBP","KRW","MYR","ISK"
-    };
-
-    public DownloadExchangeRates(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    public DownloadExchangeRates(ExchangeRateService exchangeRateService, LatestRateService latestRateService) {
+        this.exchangeRateService = exchangeRateService;
+        this.latestRateService = latestRateService;
     }
 
     public void downloadAndSaveRatesFromECB() {
@@ -83,9 +68,9 @@ public class DownloadExchangeRates {
                         String rate = obs.getAttributes().getNamedItem("OBS_VALUE").getNodeValue();
                         String date = obs.getAttributes().getNamedItem("TIME_PERIOD").getNodeValue();
 
-                        if (Integer.parseInt(date.split("-")[0]) >= 2021) {
+                        if (Integer.parseInt(date.split("-")[0]) >= 2010) {
                             this.exchangeRateService.addRate(
-                                    new ExchangeRate("EUR", currency[i], Double.parseDouble(rate), date)
+                                    new ExchangeRate("EUR", currency[i], NumHelper.roundAvoid(Double.parseDouble(rate), 4), date)
                             );
                         }
                     }
@@ -102,7 +87,7 @@ public class DownloadExchangeRates {
             // EUR to
             String currName = currency[i];
             eurToI.forEach(exchangeRate -> this.exchangeRateService.addRate(
-                        new ExchangeRate(currName, "EUR", (double) 1 / exchangeRate.getRate().getValue(), exchangeRate.getDate())
+                        new ExchangeRate(currName, "EUR", NumHelper.roundAvoid((double) 1 / exchangeRate.getRate().getValue(), 4), exchangeRate.getDate())
                     )
             );
 
@@ -119,7 +104,7 @@ public class DownloadExchangeRates {
                     }
 
                     for (int k = 0; k < eurToJ.size(); k++) {
-                        double rateIJ = eurToJ.get(k + diff).getRate().getValue() / eurToI.get(k + diff1).getRate().getValue();
+                        double rateIJ = NumHelper.roundAvoid(eurToJ.get(k + diff).getRate().getValue() / eurToI.get(k + diff1).getRate().getValue(), 4);
                         this.exchangeRateService.addRate(
                                 new ExchangeRate(currency[i], currency[j], rateIJ, eurToI.get(k + diff1).getDate())
                         );
@@ -129,8 +114,8 @@ public class DownloadExchangeRates {
         }
     }
 
-    @Scheduled(cron = "0 0 17 * *", zone = "Europe/Paris")
-    public void downloadAndSaveLatestRatesFromECB() throws IOException, ParseException {
+    @Scheduled(cron = "0 0 23 * * 1-5", zone = "Europe/Paris")
+    public void downloadAndSaveLatestRatesFromECB() throws Exception {
         List<LatestRate> latestRates = new ArrayList<>();
 
         Document document = Jsoup.connect("https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html").get();
@@ -140,6 +125,10 @@ public class DownloadExchangeRates {
         DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = originalFormat.parse(dateFromPage);
         String formattedDate = targetFormat.format(date);
+
+        if (!this.exchangeRateService.getRates(formattedDate).isEmpty() && this.latestRateService.getSize() != 0){
+            return;
+        }
 
         Element table = document.getElementsByClass("forextable").get(0);
 
@@ -155,54 +144,55 @@ public class DownloadExchangeRates {
 
         List<LatestRate> help = new ArrayList<>();
         for (int i = 0; i < latestRates.size(); i++) {
-            String first = latestRates.get(i).getRate().getSecondCountry();
+            String first = latestRates.get(i).getRate().getToCurr();
 
             for (int j = 0; j < latestRates.size(); j++) {
-                if (!first.equals(latestRates.get(j).getRate().getSecondCountry())) {
+                if (!first.equals(latestRates.get(j).getRate().getToCurr())) {
                     double rateEurI = latestRates.get(i).getRate().getValue();
                     double rateEurJ = latestRates.get(j).getRate().getValue();
-                    double rateIJ = rateEurJ / rateEurI;
+                    double rateIJ = NumHelper.roundAvoid(rateEurJ / rateEurI, 4);
 
-                    help.add(new LatestRate(latestRates.get(i).getRate().getSecondCountry(), latestRates.get(j).getRate().getSecondCountry(), rateIJ));
+                    help.add(new LatestRate(latestRates.get(i).getRate().getToCurr(), latestRates.get(j).getRate().getToCurr(), rateIJ));
                 }
             }
         }
 
         latestRates.forEach(
                 latestRate -> help.add(
-                        new LatestRate(latestRate.getRate().getSecondCountry(), "EUR", (double) 1 / (double) latestRate.getRate().getValue())
+                        new LatestRate(latestRate.getRate().getToCurr(), "EUR", NumHelper.roundAvoid((double) 1 / (double) latestRate.getRate().getValue(), 4))
                 )
         );
 
         latestRates.addAll(help);
 
         latestRates.forEach(latestRate -> {
-            LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry());
+            LatestRate r = this.latestRateService.getLatestRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr());
             if (r != null) {
-                this.latestRateService.updateRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue());
+                double diff = NumHelper.roundAvoid(latestRate.getRate().getValue() - r.getRate().getValue(), 4);
+                this.latestRateService.updateRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), diff);
             } else {
-                this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue()));
+                this.latestRateService.addRate(new LatestRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), null));
             }
         });
 
-        List<ExchangeRate> latestExchangeRates = this.exchangeRateService.getRates(formattedDate);
+        List<ExchangeRate> lastExchangeRates = this.exchangeRateService.getRates(formattedDate);
 
-        if (latestExchangeRates.size() == 0) {
+        if (lastExchangeRates.size() == 0) {
             latestRates.forEach(latestRate -> this.exchangeRateService.addRate(
-                    new ExchangeRate(latestRate.getRate().getFirstCountry(), latestRate.getRate().getSecondCountry(), latestRate.getRate().getValue(), formattedDate)
+                    new ExchangeRate(latestRate.getRate().getFromCurr(), latestRate.getRate().getToCurr(), latestRate.getRate().getValue(), formattedDate)
             ));
         } else {
-            latestExchangeRates.forEach(exchangeRate -> {
+            lastExchangeRates.forEach(exchangeRate -> {
                 if (!exchangeRate.getDate().equals(formattedDate)) {
                     latestRates.stream()
                             .filter(
-                                    latestRate -> latestRate.getRate().getFirstCountry().equals(exchangeRate.getRate().getFirstCountry()) &&
-                                            latestRate.getRate().getSecondCountry().equals(exchangeRate.getRate().getSecondCountry())
+                                    latestRate -> latestRate.getRate().getFromCurr().equals(exchangeRate.getRate().getFromCurr()) &&
+                                            latestRate.getRate().getToCurr().equals(exchangeRate.getRate().getToCurr())
                             )
                             .findFirst()
                             .ifPresent(founded -> this.exchangeRateService.addRate(
                                     new ExchangeRate(
-                                            exchangeRate.getRate().getFirstCountry(), exchangeRate.getRate().getSecondCountry(),
+                                            exchangeRate.getRate().getFromCurr(), exchangeRate.getRate().getToCurr(),
                                             founded.getRate().getValue(),
                                             formattedDate
                                     )

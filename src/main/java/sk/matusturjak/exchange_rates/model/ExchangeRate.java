@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "exchange_rates", indexes = {@Index(name = "ind_date_u", columnList = "first_country,second_country,date", unique = false)})
+@Table(name = "exchange_rates", indexes = {@Index(name = "ind_date_u", columnList = "from_curr,to_curr,date", unique = false)})
 public class ExchangeRate {
 
     @Id
@@ -22,8 +22,8 @@ public class ExchangeRate {
     public ExchangeRate() {
     }
 
-    public ExchangeRate(String firstCountry, String secondCountry, double value, String date) {
-        this.rate = new Rate(firstCountry, secondCountry, value);
+    public ExchangeRate(String fromCurr, String toCurr, double value, String date) {
+        this.rate = new Rate(fromCurr, toCurr, value);
         this.date = date;
     }
 

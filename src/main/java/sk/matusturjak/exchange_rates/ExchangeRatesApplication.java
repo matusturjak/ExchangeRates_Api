@@ -1,22 +1,21 @@
 package sk.matusturjak.exchange_rates;
 
+import com.vaadin.flow.component.dependency.NpmPackage;
 import org.json.JSONException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import sk.matusturjak.exchange_rates.model.others.CalculatePredictions;
-import sk.matusturjak.exchange_rates.model.others.DownloadExchangeRates;
-import sk.matusturjak.exchange_rates.repository.ExchangeRateRepository;
+import org.springframework.context.ConfigurableApplicationContext;
+import sk.matusturjak.exchange_rates.model.utils.CalculatePredictions;
+import sk.matusturjak.exchange_rates.model.utils.DownloadExchangeRates;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Timer;
 
 @SpringBootApplication
+@NpmPackage(value = "lumo-css-framework", version = "^4.0.10")
+@NpmPackage(value = "line-awesome", version = "1.3.0")
 public class ExchangeRatesApplication {
 
 	public static void main(String[] args) {
@@ -24,17 +23,13 @@ public class ExchangeRatesApplication {
 		DownloadExchangeRates downloadExchangeRates = run.getBean(DownloadExchangeRates.class);
 		CalculatePredictions calculatePredictions = run.getBean(CalculatePredictions.class);
 		ExchangeRateService service = run.getBean(ExchangeRateService.class);
-		calculatePredictions.calculateAndSave();
+
 		if(service.getSize() < 1) {
 			try {
 				downloadExchangeRates.downloadAndSaveRatesFromECB();
 				downloadExchangeRates.downloadAndSaveLatestRatesFromECB();
 				calculatePredictions.calculateAndSave();
-			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

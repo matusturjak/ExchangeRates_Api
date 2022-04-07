@@ -1,5 +1,11 @@
 package sk.matusturjak.exchange_rates.predictions.exp_smoothing;
 
+import sk.matusturjak.exchange_rates.model.utils.NumHelper;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class DoubleExponentialSmoothing implements ExponentialSmoothing {
 
     private Double[] modelData;
@@ -8,6 +14,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
     private Double st0;
     private Double st1;
     private Double mse;
+    private String residuals;
 
     /**
      * Parametricky konstruktor triedy.
@@ -21,6 +28,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
         this.st0 = 0d;
         this.st1 = 0d;
         this.mse = 0d;
+        this.residuals = "";
     }
 
     /**
@@ -60,7 +68,9 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
 
         for(int i=0; i < data.length; i++) {
             this.mse += Math.pow(data[i] - this.modelData[i],2);
+            this.residuals = this.residuals + NumHelper.roundAvoid(data[i] - this.modelData[i],4) + ",";
         }
+        this.residuals = this.residuals.substring(0, this.residuals.length() - 1);
         this.mse = this.mse/data.length;
     }
 
@@ -72,11 +82,11 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
      * @return
      */
     @Override
-    public Double[] predict(Double[] data, Double alpha) {
+    public double[] predict(Double[] data, Double alpha) {
         this.fit(data,alpha);
-        Double[] predictions = new Double[this.modelData.length - data.length];
+        double[] predictions = new double[this.modelData.length - data.length];
 
-        predictions[0] = this.modelData[data.length];
+        predictions[0] = NumHelper.roundAvoid(this.modelData[data.length], 4);
         for(int i = 0; i < this.modelData.length - data.length - 1; i++){
             this.st0 = alpha*this.modelData[data.length + i] + (1-alpha)*this.st0;
             this.st1 = alpha*this.st0 + (1- alpha)*this.st1;
@@ -85,7 +95,7 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
             b1 = ((alpha)/(1-alpha))*(this.st0 - this.st1);
 
             this.modelData[data.length + i + 1] = b0 + b1;
-            predictions[i+1] = this.modelData[data.length + i + 1];
+            predictions[i+1] = NumHelper.roundAvoid(this.modelData[data.length + i + 1], 4);
         }
 
         return predictions;
@@ -96,7 +106,24 @@ public class DoubleExponentialSmoothing implements ExponentialSmoothing {
      * @return
      */
     @Override
-    public Double getResiduals() {
+    public double getMSE() {
         return this.mse;
+    }
+
+    @Override
+    public double[] fittedValues() {
+        return new double[0];
+    }
+
+    @Override
+    public String getResiduals() {
+        return residuals;
+    }
+
+    @Override
+    public String getFitted() {
+        for (int i = 0; i < this.modelData.length; i++) this.modelData[i] = NumHelper.roundAvoid(this.modelData[i], 4);
+        return Stream.<Double[]>of(this.modelData).map(Arrays::toString).collect(Collectors.joining(","))
+                .replace("[", "").replace("]","").replace(" ", "");
     }
 }

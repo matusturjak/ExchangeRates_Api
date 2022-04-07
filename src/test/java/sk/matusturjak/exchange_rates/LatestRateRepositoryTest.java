@@ -1,10 +1,9 @@
 package sk.matusturjak.exchange_rates;
 
-import javafx.application.Application;
+//import javafx.application.Application;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,21 +24,21 @@ public class LatestRateRepositoryTest {
 
     @Before
     public void fillDB(){
-        latestRateRepository.save(new LatestRate("EUR", "HRK", 0));
-        latestRateRepository.save(new LatestRate("EUR", "CHF", 0));
-        latestRateRepository.save(new LatestRate("EUR", "MXN", 0));
-        latestRateRepository.save(new LatestRate("EUR", "ZAR", 0));
-        latestRateRepository.save(new LatestRate("EUR", "INR", 0));
-        latestRateRepository.save(new LatestRate("CAD", "HRK", 0));
-        latestRateRepository.save(new LatestRate("CAD", "CHF", 0));
-        latestRateRepository.save(new LatestRate("CAD", "MXN", 0));
-        latestRateRepository.save(new LatestRate("CAD", "ZAR", 0));
-        latestRateRepository.save(new LatestRate("CAD", "INR", 0));
-        latestRateRepository.save(new LatestRate("HKD", "HRK", 0));
-        latestRateRepository.save(new LatestRate("HKD", "CHF", 0));
-        latestRateRepository.save(new LatestRate("HKD", "MXN", 0));
-        latestRateRepository.save(new LatestRate("HKD", "ZAR", 0));
-        latestRateRepository.save(new LatestRate("HKD", "INR", 0));
+        latestRateRepository.save(new LatestRate("EUR", "HRK", 0d));
+        latestRateRepository.save(new LatestRate("EUR", "CHF", 0d));
+        latestRateRepository.save(new LatestRate("EUR", "MXN", 0d));
+        latestRateRepository.save(new LatestRate("EUR", "ZAR", 0d));
+        latestRateRepository.save(new LatestRate("EUR", "INR", 0d));
+        latestRateRepository.save(new LatestRate("CAD", "HRK", 0d));
+        latestRateRepository.save(new LatestRate("CAD", "CHF", 0d));
+        latestRateRepository.save(new LatestRate("CAD", "MXN", 0d));
+        latestRateRepository.save(new LatestRate("CAD", "ZAR", 0d));
+        latestRateRepository.save(new LatestRate("CAD", "INR", 0d));
+        latestRateRepository.save(new LatestRate("HKD", "HRK", 0d));
+        latestRateRepository.save(new LatestRate("HKD", "CHF", 0d));
+        latestRateRepository.save(new LatestRate("HKD", "MXN", 0d));
+        latestRateRepository.save(new LatestRate("HKD", "ZAR", 0d));
+        latestRateRepository.save(new LatestRate("HKD", "INR", 0d));
     }
 
     @After
@@ -62,12 +61,12 @@ public class LatestRateRepositoryTest {
         List<LatestRate> rates = this.latestRateRepository.getLatestRates("CAD");
 
         assertEquals(5, rates.size());
-        rates.forEach(latestRate -> assertEquals("CAD",latestRate.getRate().getFirstCountry()));
+        rates.forEach(latestRate -> assertEquals("CAD",latestRate.getRate().getFromCurr()));
     }
 
     @Test
     public void updateValueOfEUR_HRKFrom0To1(){
-        this.latestRateRepository.updateRate("EUR","HRK",1);
+        //this.latestRateRepository.updateRate("EUR","HRK",1);
         LatestRate rate = this.latestRateRepository.getLatestRate("EUR", "HRK");
         assertEquals(1, rate.getRate().getValue());
     }

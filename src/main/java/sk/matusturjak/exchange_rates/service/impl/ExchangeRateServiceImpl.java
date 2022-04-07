@@ -14,8 +14,11 @@ import java.util.stream.Collectors;
 @Service
 public class ExchangeRateServiceImpl implements ExchangeRateService {
 
-    @Autowired
-    private ExchangeRateRepository exchangeRateRepository;
+    private final ExchangeRateRepository exchangeRateRepository;
+
+    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository) {
+        this.exchangeRateRepository = exchangeRateRepository;
+    }
 
     @Override
     public void addRate(ExchangeRate exchangeRate) {
@@ -44,6 +47,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
+    public List<ExchangeRate> getRatesByDate(String from, String to, String date) {
+        return this.exchangeRateRepository.getRatesByDate(from, to, date);
+    }
+
+    @Override
     public List<ExchangeRate> getRates(String from, String to, String start_at, String end_at) {
         try {
             return this.exchangeRateRepository.getRates(from, to, new SimpleDateFormat("yyyy-MM-dd").parse(start_at),
@@ -62,6 +70,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Override
     public List<ExchangeRate> getLatest() {
         return this.exchangeRateRepository.getLatest();
+    }
+
+    @Override
+    public List<ExchangeRate> get2ndLatestRates() {
+        return this.exchangeRateRepository.get2ndLatestRates();
     }
 
     @Override

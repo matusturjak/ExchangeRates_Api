@@ -12,15 +12,18 @@ import java.util.List;
 
 @Repository
 public interface PredictionsRepository extends JpaRepository<Prediction, Long> {
-    @Query(value = "SELECT * FROM predictions p WHERE p.first_country LIKE ?1 and p.second_country LIKE ?2 AND " +
-            "p.method LIKE CASE WHEN ?3 < 3 THEN \"GARCH\" WHEN ?3 = 3 THEN \"exp3\" WHEN ?3 = 5 THEN \"exp5\" ELSE \"\" END LIMIT ?3", nativeQuery = true)
+    @Query(value = "SELECT * FROM predictions p WHERE p.from_curr LIKE ?1 and p.to_curr LIKE ?2 AND " +
+            "p.method LIKE CASE WHEN ?3 < 3 THEN \"%arma%\" WHEN ?3 = 3 THEN \"%exp3\" WHEN ?3 = 5 THEN \"%exp5\" ELSE \"\" END", nativeQuery = true)
     List<Prediction> getPredictions(String from, String to, Integer numberOfPredictions);
+
+    @Query(value = "SELECT * FROM predictions p WHERE p.from_curr LIKE ?1 and p.to_curr LIKE ?2 AND p.method like ?3", nativeQuery = true)
+    List<Prediction> getPredictions(String from, String to, String method);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE predictions p set p.value = ?4, p.date = ?5 where p.first_country = ?1 and p.second_country = ?2 and p.method = ?3", nativeQuery = true)
-    void updatePredictions(String from, String to, String method, double value, Date date);
+    @Query(value = "UPDATE predictions p set p.value = ?4, p.date = ?5 where p.from_curr = ?1 and p.to_curr = ?2 and p.method = ?3", nativeQuery = true)
+    void updatePredictions(String from, String to, String method, double value, String date);
 
-    @Query(value = "SELECT * FROM predictions p WHERE p.first_country = ?1 AND p.second_country = ?2 AND p.method = ?3", nativeQuery = true)
+    @Query(value = "SELECT * FROM predictions p WHERE p.from_curr = ?1 AND p.to_curr = ?2 AND p.method = ?3", nativeQuery = true)
     Prediction findPrediction(String from, String to, String method);
 }
