@@ -15,7 +15,7 @@
 	<description>Exhange rates</description>
 
 	<properties>
-		<app-version>1.0.0-RELEASE</app-version>
+		<app-version>1.0.1-RELEASE</app-version>
 	</properties>
 
 	<dependencyManagement>
