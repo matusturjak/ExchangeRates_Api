@@ -13,6 +13,9 @@ import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 import java.io.IOException;
 import java.text.ParseException;
 
+/**
+ * Hlavná trieda zodpovedná za spustenie aplikácie.
+ */
 @SpringBootApplication
 @NpmPackage(value = "lumo-css-framework", version = "^4.0.10")
 @NpmPackage(value = "line-awesome", version = "1.3.0")

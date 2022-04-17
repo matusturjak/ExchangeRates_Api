@@ -11,6 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Trieda reprezentujúca GARCH model.
+ * Trieda je zodpovedná za vytvorenie optimálneho GARCH(1,1) modelu.
+ * Trieda dokáže vytvoriť GARCH(1,1) model pre rezíduá zadaného ARIMA modelu alebo pre ľubovoľný časový rad.
+ */
 public abstract class AbstractGarchModel extends PredictionModel implements PredictionModelInterface {
     protected ArimaModel arimaModel;
 

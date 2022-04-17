@@ -1,5 +1,8 @@
 package sk.matusturjak.exchange_rates.predictions.exp_smoothing;
 
+/**
+ * Trieda, ktorá vytvorí pre zadaný časový rad lineárny regresný model
+ */
 public class LinearRegression {
     private double intercept, slope;
 

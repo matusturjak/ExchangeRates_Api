@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+/**
+ * Objekt mapovaný do DB, ktorý ukladá informácie o historickej hodnote menového kurzu za určitý dátum
+ */
 @Entity
 @Table(name = "exchange_rates", indexes = {@Index(name = "ind_date_u", columnList = "from_curr,to_curr,date", unique = false)})
 public class ExchangeRate {

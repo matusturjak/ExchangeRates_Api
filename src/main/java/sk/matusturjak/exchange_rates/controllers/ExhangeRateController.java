@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.matusturjak.exchange_rates.service.ExchangeRateService;
 
+/**
+ * Controller, ktorý poskytuje historické dáta menových kurzov v JSON formáte.
+ */
 @RestController
 @RequestMapping("/rates")
 public class ExhangeRateController {

@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.matusturjak.exchange_rates.service.PredictionService;
 
+/**
+ * Controller, ktorý poskytuje predikcie menových kurzov v JSON formáte.
+ */
 @RestController
 @RequestMapping("/prediction")
 public class PredictionsController {

@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 
+/**
+ * Objekt mapovaný do DB, ktorý obsahuje vypočítanú hodnotu predikcie menového kurzu pre určitý dátum v budúcnosti.
+ */
 @Entity
 @Table(name = "predictions", indexes = {@Index(name = "ind_pred", columnList = "from_curr,to_curr,method", unique = false)})
 @JsonInclude(JsonInclude.Include.NON_NULL)

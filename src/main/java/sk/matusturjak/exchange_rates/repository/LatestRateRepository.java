@@ -9,6 +9,9 @@ import sk.matusturjak.exchange_rates.model.LatestRate;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Trieda, ktorá priamo komunikuje s DB a poskytuje vrstve Service údaje o aktuálnych dátach menových kurzov.
+ */
 @Repository
 public interface LatestRateRepository extends JpaRepository<LatestRate, Long> {
 

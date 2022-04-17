@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+/**
+ * Objekt mapovaný do DB, ktorý uchováva výstupy vytvorených modelov pre konkrétny menový kurz.
+ * (rezíduá modelu, odhadnuté hodnoty vývoja  menového kurzu a v prípade ARIMA-GARCH modelu aj odhadnuté hodnoty volatility rezíduí).
+ */
 @Entity
 @Table(name = "model_output")
 public class ModelOutput {

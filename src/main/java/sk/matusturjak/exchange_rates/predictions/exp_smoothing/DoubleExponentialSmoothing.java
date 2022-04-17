@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Trieda, ktorá je zodpovedná za tvorbu modelu dvojitého exponenciálneho vyrovnávania pre zadaný časový rad.
+ */
 public class DoubleExponentialSmoothing implements ExponentialSmoothing {
 
     private Double[] modelData;

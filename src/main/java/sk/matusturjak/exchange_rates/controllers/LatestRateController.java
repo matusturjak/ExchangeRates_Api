@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import sk.matusturjak.exchange_rates.model.LatestRate;
 import sk.matusturjak.exchange_rates.service.LatestRateService;
 
+/**
+ * Controller, ktorý poskytuje aktuálne dáta menových kurzov v JSON formáte.
+ */
 @RestController
 @RequestMapping("/latest")
 public class LatestRateController {

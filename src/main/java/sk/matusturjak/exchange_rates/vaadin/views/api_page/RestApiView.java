@@ -19,6 +19,9 @@ import sk.matusturjak.exchange_rates.vaadin.views.MainLayout;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Trieda reprezentujúca okno s dokumentáciou pre Rest API
+ */
 @Route(value = "rest_api", layout = MainLayout.class)
 public class RestApiView extends VerticalLayout {
 

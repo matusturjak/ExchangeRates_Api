@@ -4,6 +4,9 @@ import sk.matusturjak.exchange_rates.model.ModelOutput;
 
 import java.util.List;
 
+/**
+ * Interface reprezentujúci funkcie, ktoré poskytujú informácie o vytvorených autoregresných modeloch.
+ */
 public interface ModelOutputService {
     List<Double> getResiduals(String from, String to, String method);
     List<Double> getSigma(String from, String to, String method);

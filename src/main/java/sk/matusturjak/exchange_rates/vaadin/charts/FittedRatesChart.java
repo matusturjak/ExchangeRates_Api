@@ -14,6 +14,9 @@ import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 
 import java.util.List;
 
+/**
+ * Trieda, ktorá vytvára graf zobrazujúci vývoj odhadnutých a reálnych hodnôt časového radu
+ */
 public class FittedRatesChart extends Div {
 
     private ApexCharts chart;

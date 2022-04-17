@@ -15,12 +15,13 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import sk.matusturjak.exchange_rates.vaadin.views.MainLayout;
 
+/**
+ * Trieda reprezentujúca okno View
+ */
 @PageTitle("About")
 @Route(value = "about", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 public class AboutView extends VerticalLayout {
-    private TextField name;
-    private Button sayHello;
 
     public AboutView() {
         setSpacing(false);

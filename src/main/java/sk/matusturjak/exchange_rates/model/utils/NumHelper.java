@@ -5,6 +5,9 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Trieda s pomocnými výpočtami.
+ */
 public class NumHelper {
     public static double roundAvoid(double value, int places) {
         double scale = Math.pow(10, places);

@@ -19,6 +19,9 @@ import sk.matusturjak.exchange_rates.service.PredictionService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Trieda zodpovedná za výpočet predikcií a ich následné uloženie do databázy
+ */
 @Component
 public class CalculatePredictions {
     private final PredictionService predictionService;

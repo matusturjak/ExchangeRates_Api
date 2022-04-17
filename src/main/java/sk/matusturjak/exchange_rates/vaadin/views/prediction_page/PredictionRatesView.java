@@ -33,6 +33,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Trieda reprezentujúca oksno s predikciami
+ */
 @Route(value = "prediction_rates", layout = MainLayout.class)
 public class PredictionRatesView extends VerticalLayout {
     private PredictionService predictionService;

@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+/**
+ * Objekt mapovaný do DB, ktorý obsahuje aktuálnu hodnotu menového kurzu a taktiež informáciu o tom ako veľmi sa táto hodnota zmenila
+ * v porovnaní s predchádzajúcou aktuálnou hodnotou
+ */
 @Entity
 @Table(name = "latest_rates", indexes = {@Index(name = "ind_latest", columnList = "from_curr, to_curr", unique = false)})
 public class LatestRate {

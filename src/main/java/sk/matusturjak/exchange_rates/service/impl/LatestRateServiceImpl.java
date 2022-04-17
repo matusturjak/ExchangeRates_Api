@@ -9,6 +9,9 @@ import sk.matusturjak.exchange_rates.service.LatestRateService;
 
 import java.util.List;
 
+/**
+ * Service, ktorá komunikuje s vrstvou Repository a v aplikácií poskytuje informácie o aktuálnych hodnotách menových kurzov.
+ */
 @Service
 public class LatestRateServiceImpl implements LatestRateService {
 

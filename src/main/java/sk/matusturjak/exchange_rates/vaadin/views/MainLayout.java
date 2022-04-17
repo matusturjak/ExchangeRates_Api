@@ -19,6 +19,9 @@ import sk.matusturjak.exchange_rates.vaadin.views.prediction_page.PredictionRate
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Bočný panel aplikácie.
+ */
 @PWA(name = "My App", shortName = "My App", enableInstallPrompt = false)
 @Theme(themeFolder = "myapp")
 @PageTitle("Main")

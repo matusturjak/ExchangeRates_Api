@@ -8,6 +8,10 @@ import sk.matusturjak.exchange_rates.model.ModelOutput;
 
 import javax.transaction.Transactional;
 
+/**
+ * Trieda, ktorá priamo komunikuje s DB a poskytuje vrstve Service údaje vytvorených modelov exponenciálneho vyrovnávania
+ * a ARIMA - GARCH, ARIMA - IGARCH
+ */
 @Repository
 public interface ModelOutputRepository extends JpaRepository<ModelOutput, Long> {
     @Query(value = "SELECT * FROM model_output mo WHERE from_curr like ?1 and to_curr like ?2 and method like ?3", nativeQuery = true)
