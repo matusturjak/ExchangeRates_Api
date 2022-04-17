@@ -16,6 +16,7 @@
 
 	<properties>
 		<app-version>1.0.1-RELEASE</app-version>
+		<vaadin.productionMode>true</vaadin.productionMode>
 	</properties>
 
 	<dependencyManagement>
@@ -210,19 +211,19 @@
 					<maxAttempts>240</maxAttempts>
 				</configuration>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>com.vaadin</groupId>-->
-<!--				<artifactId>vaadin-maven-plugin</artifactId>-->
-<!--				<version>${vaadin.version}</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<goals>-->
-<!--							<goal>prepare-frontend</goal>-->
-<!--							<goal>build-frontend</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>14.7.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-frontend</goal>
+							<goal>build-frontend</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 <!--			<plugin>-->
 <!--				<groupId>org.apache.maven.plugins</groupId>-->
 <!--				<artifactId>maven-compiler-plugin</artifactId>-->
