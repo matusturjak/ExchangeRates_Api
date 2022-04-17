@@ -1,5 +1,8 @@
 package sk.matusturjak.exchange_rates.vaadin.views.actual_page;
 
+/**
+ * Trieda, ktorej dáta sa mapujú do tabuľky zobrazujúcej aktuálne hodnoty menových kurzov v aplikácii.
+ */
 public class CurrencyTableRow {
     private String from;
     private String to;

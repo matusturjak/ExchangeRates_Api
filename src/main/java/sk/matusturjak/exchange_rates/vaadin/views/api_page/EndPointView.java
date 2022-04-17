@@ -9,6 +9,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
+/**
+ * Trieda reprezentujúca okno, ktoré v aplikácií zobrazuje informácie o menových kurzov v JSON formáte.
+ */
 public class EndPointView extends VerticalLayout {
     public EndPointView(String requestName, String jsonResponse, Grid<RequestParam> grid) {
         TextField predictions = new TextField();

@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Trieda, ktorá je zodpovedná za tvorbu modelu jednoduchého exponenciálneho vyrovnávania pre zadaný časový rad.
+ */
 public class SingleExponentialSmoothing implements ExponentialSmoothing {
     private Double[] modelData;
     private Double st0;

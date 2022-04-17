@@ -23,6 +23,9 @@ import sk.matusturjak.exchange_rates.vaadin.views.MainLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Trieda reprezentujúca okno s aktuálnymi hodnotami menových kurzov.
+ */
 @Route(value = "actual_rates", layout = MainLayout.class)
 public class ActualRatesView extends VerticalLayout {
     private ComboBox<String> baseCurr;

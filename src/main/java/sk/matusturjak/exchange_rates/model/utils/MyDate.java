@@ -10,6 +10,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Pomocná trieda pre prácu s dátumom
+ */
 public class MyDate {
     private SimpleDateFormat sdf;
 

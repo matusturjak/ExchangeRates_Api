@@ -11,6 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service, ktorá komunikuje s vrstvou Repository a v aplikácií poskytuje informácie o historických hodnotách menových kurzov.
+ */
 @Service
 public class ExchangeRateServiceImpl implements ExchangeRateService {
 

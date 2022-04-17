@@ -10,6 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service, ktorá komunikuje s vrstvou Repository a v aplikácií poskytuje informácie o vytvorených autoregresných modeloch
+ * pre časové rady menových kurzov.
+ */
 @Service
 public class ModelOutputServiceImpl implements ModelOutputService {
 

@@ -9,6 +9,10 @@ import javax.script.ScriptException;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * Trieda, ktorá reprezentuje ARIMA model.
+ * Pre zadané dáta dokáže vytvoriť optimálny ARIMA model s využitím technológie Renjin.
+ */
 public class ArimaModel extends PredictionModel {
     private HashMap<String, double[]> armaParam;
     private boolean isStacionary = false;

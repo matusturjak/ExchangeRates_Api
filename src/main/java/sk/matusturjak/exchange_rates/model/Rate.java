@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * Predok všetkých entít mapovaných do DB.
+ */
 @Embeddable
 public class Rate {
 

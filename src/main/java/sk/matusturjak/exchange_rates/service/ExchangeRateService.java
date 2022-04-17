@@ -4,6 +4,9 @@ import sk.matusturjak.exchange_rates.model.ExchangeRate;
 
 import java.util.List;
 
+/**
+ * Interface reprezentujúci funkcie, ktoré poskytujú informácie o historických hodnotách menových kurzov.
+ */
 public interface ExchangeRateService {
     void addRate(ExchangeRate exchangeRate);
 

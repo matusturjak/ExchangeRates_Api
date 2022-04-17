@@ -8,6 +8,9 @@ import sk.matusturjak.exchange_rates.model.ExchangeRate;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Trieda, ktorá priamo komunikuje s DB a poskytuje vrstve Service údaje o historických dátach menových kurzov.
+ */
 @Repository
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long> {
 

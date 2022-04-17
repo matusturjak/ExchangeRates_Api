@@ -14,6 +14,9 @@ import com.vaadin.flow.component.html.Div;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Trieda, ktorá vytvára graf zobrazujúci vývoj rezíduí ARIMA modelu a taktiež odhadnutú volatilitu týchto rezíduí.
+ */
 public class ResidualsChart extends Div {
     private ApexCharts chart;
 

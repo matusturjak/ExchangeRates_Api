@@ -22,6 +22,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Trieda zodpovedná za sťahovanie dát menových kurzov z centrálnej európskej banky a ich následné uloženie do databázy
+ */
 @Component
 public class DownloadExchangeRates {
     private final ExchangeRateService exchangeRateService;

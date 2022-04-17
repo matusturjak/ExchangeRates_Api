@@ -10,6 +10,9 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Trieda, ktorá priamo komunikuje s DB a poskytuje vrstve Service predikcie menových kurzov.
+ */
 @Repository
 public interface PredictionsRepository extends JpaRepository<Prediction, Long> {
     @Query(value = "SELECT * FROM predictions p WHERE p.from_curr LIKE ?1 and p.to_curr LIKE ?2 AND " +

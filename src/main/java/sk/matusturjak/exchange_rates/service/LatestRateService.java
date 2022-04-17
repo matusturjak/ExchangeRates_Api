@@ -4,6 +4,9 @@ import sk.matusturjak.exchange_rates.model.LatestRate;
 
 import java.util.List;
 
+/**
+ * Interface reprezentujúci funkcie, ktoré poskytujú informácie o aktuálnych hodnotách menových kurzov.
+ */
 public interface LatestRateService {
     List<LatestRate> getAllLatestRates();
     List<LatestRate> getLatestRates(String from);

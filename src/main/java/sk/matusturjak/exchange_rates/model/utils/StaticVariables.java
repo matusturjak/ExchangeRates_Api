@@ -1,5 +1,8 @@
 package sk.matusturjak.exchange_rates.model.utils;
 
+/**
+ * Trieda, ktorá definuje atribúty využivajúce sa v celom projekte.
+ */
 public class StaticVariables {
     public static String[] currencies = {"EUR","CAD","CZK","HUF","AUD","HRK","CHF","PLN", "BGN", "TRY", "USD", "GBP", "SEK","NOK"};
 //    public static String[] currencies = {"EUR","CAD","CZK","HRK"};

@@ -7,6 +7,9 @@ import sk.matusturjak.exchange_rates.service.PredictionService;
 
 import java.util.List;
 
+/**
+ * Service, ktorá komunikuje s vrstvou Repository a v aplikácií poskytuje informácie o budúcich hodnotách menových kurzov.
+ */
 @Service
 public class PredictionServiceImpl implements PredictionService {
 

@@ -15,6 +15,9 @@ import sk.matusturjak.exchange_rates.model.utils.NumHelper;
 
 import java.util.List;
 
+/**
+ * Trieda, ktorá vytvára graf zobrazujúci historický vývoj časového radu
+ */
 public class ExchangeRatesChart extends Div {
     private ApexCharts chart;
 

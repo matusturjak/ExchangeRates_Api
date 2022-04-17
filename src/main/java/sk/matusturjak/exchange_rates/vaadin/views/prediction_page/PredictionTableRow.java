@@ -1,5 +1,8 @@
 package sk.matusturjak.exchange_rates.vaadin.views.prediction_page;
 
+/**
+ * Trieda, ktorej dáta sa mapujú do tabuľky zobrazujúcej predikcie menových kurzov.
+ */
 public class PredictionTableRow {
     private String date;
     private double value;

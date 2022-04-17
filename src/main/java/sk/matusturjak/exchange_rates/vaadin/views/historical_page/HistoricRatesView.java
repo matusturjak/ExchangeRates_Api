@@ -23,6 +23,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Trieda reprezentujúca okno s historickými hodnotami menových kurzov.
+ */
 @Route(value = "historic_rates", layout = MainLayout.class)
 public class HistoricRatesView extends VerticalLayout {
     private ComboBox<String> firstCurr;

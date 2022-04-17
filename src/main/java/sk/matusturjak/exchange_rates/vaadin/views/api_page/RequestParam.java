@@ -1,5 +1,8 @@
 package sk.matusturjak.exchange_rates.vaadin.views.api_page;
 
+/**
+ * Trieda, ktorej dáta sa mapujú do tabuľky v aplikácií, ktorá poskytuje vysvetlivky o Rest API volaniach
+ */
 public class RequestParam {
     private String value;
     private String description;
