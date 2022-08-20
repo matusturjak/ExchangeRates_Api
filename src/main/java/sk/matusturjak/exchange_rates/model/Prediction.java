@@ -14,14 +14,15 @@ import javax.persistence.*;
 public class Prediction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "seq_prediction_id", sequenceName = "SEQ_PREDICTION_ID", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_prediction_id")
     @JsonIgnore
     private Long id;
 
     @Embedded
     private Rate rate;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date_value", nullable = false)
     private String date;
 
     @Column(name = "method", nullable = false)

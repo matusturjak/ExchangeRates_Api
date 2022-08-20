@@ -8,18 +8,19 @@ import javax.persistence.*;
  * Objekt mapovaný do DB, ktorý ukladá informácie o historickej hodnote menového kurzu za určitý dátum
  */
 @Entity
-@Table(name = "exchange_rates", indexes = {@Index(name = "ind_date_u", columnList = "from_curr,to_curr,date", unique = false)})
+@Table(name = "exchange_rates", indexes = {@Index(name = "ind_date_u", columnList = "from_curr,to_curr,date_value", unique = false)})
 public class ExchangeRate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "seq_exchange_rate_id", sequenceName = "SEQ_EXCHANGE_RATE_ID", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_exchange_rate_id")
     @JsonIgnore
     private Long id;
 
     @Embedded
     private Rate rate;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date_value", nullable = false)
     private String date;
 
     public ExchangeRate() {

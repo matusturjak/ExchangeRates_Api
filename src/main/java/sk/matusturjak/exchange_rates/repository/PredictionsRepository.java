@@ -24,7 +24,7 @@ public interface PredictionsRepository extends JpaRepository<Prediction, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE predictions p set p.value = ?4, p.date = ?5 where p.from_curr = ?1 and p.to_curr = ?2 and p.method = ?3", nativeQuery = true)
+    @Query(value = "UPDATE predictions p set p.rate_value = ?4, p.date_value = ?5 where p.from_curr = ?1 and p.to_curr = ?2 and p.method = ?3", nativeQuery = true)
     void updatePredictions(String from, String to, String method, double value, String date);
 
     @Query(value = "SELECT * FROM predictions p WHERE p.from_curr = ?1 AND p.to_curr = ?2 AND p.method = ?3", nativeQuery = true)

@@ -14,11 +14,11 @@
 	<name>exchange_rates</name>
 	<description>Exhange rates</description>
 
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<properties>
 <!--		<java.version>11</java.version>-->
-<!--		<vaadin.version>14.7.5</vaadin.version>-->
+		<vaadin.version>14.7.5</vaadin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -56,10 +56,21 @@
 			<scope>provided</scope>
 		</dependency>
 
+<!--		<dependency>-->
+<!--			<groupId>mysql</groupId>-->
+<!--			<artifactId>mysql-connector-java</artifactId>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 
 		<dependency>
@@ -213,19 +224,19 @@
 					<maxAttempts>240</maxAttempts>
 				</configuration>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>com.vaadin</groupId>-->
-<!--				<artifactId>vaadin-maven-plugin</artifactId>-->
-<!--				<version>${vaadin.version}</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<goals>-->
-<!--							<goal>prepare-frontend</goal>-->
-<!--							<goal>build-frontend</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-frontend</goal>
+							<goal>build-frontend</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 <!--			<plugin>-->
 <!--				<groupId>org.apache.maven.plugins</groupId>-->
 <!--				<artifactId>maven-compiler-plugin</artifactId>-->

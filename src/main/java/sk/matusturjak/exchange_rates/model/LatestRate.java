@@ -13,7 +13,8 @@ import javax.persistence.*;
 public class LatestRate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "seq_latest_rate_id", sequenceName = "SEQ_LATEST_RATE_ID", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_latest_rate_id")
     @JsonIgnore
     private Long id;
 

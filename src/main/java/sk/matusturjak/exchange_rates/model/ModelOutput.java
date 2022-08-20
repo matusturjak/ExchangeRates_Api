@@ -13,26 +13,27 @@ import javax.persistence.*;
 public class ModelOutput {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "seq_model_output_id", sequenceName = "SEQ_MODEL_OUTPUT_ID", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_model_output_id")
     @JsonIgnore
     private Long id;
 
     @Column(name = "method")
     private String method;
 
-    @Column(name = "from_curr", columnDefinition = "VARCHAR(3)")
+    @Column(name = "from_curr", columnDefinition = "VARCHAR2(3)")
     private String fromCurr;
 
-    @Column(name = "to_curr", columnDefinition = "VARCHAR(3)")
+    @Column(name = "to_curr", columnDefinition = "VARCHAR2(3)")
     private String toCurr;
 
-    @Column(name = "fitted", columnDefinition = "TEXT")
+    @Column(name = "fitted", columnDefinition = "CLOB")
     private String fitted;
 
-    @Column(name = "residuals", columnDefinition = "TEXT")
+    @Column(name = "residuals", columnDefinition = "CLOB")
     private String residuals;
 
-    @Column(name = "sigma", columnDefinition = "TEXT")
+    @Column(name = "sigma", columnDefinition = "CLOB")
     private String sigma;
 
     public ModelOutput() {
