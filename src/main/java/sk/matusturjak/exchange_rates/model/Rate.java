@@ -12,15 +12,15 @@ import java.util.Objects;
 @Embeddable
 public class Rate {
 
-    @Column(name = "from_curr", nullable = false, columnDefinition = "VARCHAR(3)")
+    @Column(name = "from_curr", nullable = false, columnDefinition = "VARCHAR2(3)")
     @JsonProperty("from")
     private String fromCurr;
 
-    @Column(name = "to_curr", nullable = false, columnDefinition = "VARCHAR(3)")
+    @Column(name = "to_curr", nullable = false, columnDefinition = "VARCHAR2(3)")
     @JsonProperty("to")
     private String toCurr;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "rate_value", nullable = false)
     private double value;
 
     public Rate() {

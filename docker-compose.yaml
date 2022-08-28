@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  exchange_rates:
+    image: localhost:5000/exchange_rates:20220820
+    container_name: exchange_rates
+    restart: always
+    ports:
+      - "8081:8888"
+    environment:
+      - "JAVA_OPTIONS="
+    logging:
+      options:
+        max-size: "1G"
+        max-file: "10"

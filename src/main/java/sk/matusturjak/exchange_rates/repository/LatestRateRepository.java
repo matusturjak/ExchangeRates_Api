@@ -23,7 +23,7 @@ public interface LatestRateRepository extends JpaRepository<LatestRate, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE latest_rates SET value = ?3, difference = ?4 WHERE from_curr = ?1 AND to_curr = ?2", nativeQuery = true)
+    @Query(value = "UPDATE latest_rates SET rate_value = ?3, difference = ?4 WHERE from_curr = ?1 AND to_curr = ?2", nativeQuery = true)
     void updateRate(String from, String to, double value, double difference);
 
     @Query(value = "SELECT count(*) from latest_rates", nativeQuery = true)
