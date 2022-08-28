@@ -15,9 +15,11 @@
 	<description>Exhange rates</description>
 
 	<properties>
-		<app-version>1.0.2-RELEASE</app-version>
+		<app-version>1.0.3-RELEASE</app-version>
 		<vaadin.productionMode>true</vaadin.productionMode>
+		<vaadin.version>14.7.5</vaadin.version>
 	</properties>
+	<packaging>jar</packaging>
 
 	<dependencyManagement>
 		<dependencies>
@@ -54,10 +56,21 @@
 			<scope>provided</scope>
 		</dependency>
 
+<!--		<dependency>-->
+<!--			<groupId>mysql</groupId>-->
+<!--			<artifactId>mysql-connector-java</artifactId>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 
 		<dependency>
@@ -214,7 +227,7 @@
 			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
-				<version>14.7.5</version>
+				<version>${vaadin.version}</version>
 				<executions>
 					<execution>
 						<goals>
