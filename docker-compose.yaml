@@ -2,7 +2,7 @@ version: '2'
 
 services:
   exchange_rates:
-    image: localhost:5000/exchange_rates:20220820
+    image: localhost/exchangerate:20220914
     container_name: exchange_rates
     restart: always
     ports:

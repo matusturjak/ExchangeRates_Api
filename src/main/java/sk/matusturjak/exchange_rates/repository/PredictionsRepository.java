@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface PredictionsRepository extends JpaRepository<Prediction, Long> {
     @Query(value = "SELECT * FROM predictions p WHERE p.from_curr LIKE ?1 and p.to_curr LIKE ?2 AND " +
-            "p.method LIKE CASE WHEN ?3 < 3 THEN \"%arma%\" WHEN ?3 = 3 THEN \"%exp3\" WHEN ?3 = 5 THEN \"%exp5\" ELSE \"\" END", nativeQuery = true)
+            "p.method LIKE CASE WHEN ?3 < 3 THEN '%arma%' WHEN ?3 = 3 THEN '%exp3' WHEN ?3 = 5 THEN '%exp5' ELSE '' END", nativeQuery = true)
     List<Prediction> getPredictions(String from, String to, Integer numberOfPredictions);
 
     @Query(value = "SELECT * FROM predictions p WHERE p.from_curr LIKE ?1 and p.to_curr LIKE ?2 AND p.method like ?3", nativeQuery = true)

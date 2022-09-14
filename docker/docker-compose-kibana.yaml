@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.1.1
+    environment:
+      - "xpack.license.self_generated.type=basic"
+      - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+
+networks:
+  elk:
+    driver: bridge
